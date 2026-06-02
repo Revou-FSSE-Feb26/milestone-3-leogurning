@@ -23,7 +23,7 @@ export default function HeroSection() {
               </Link>
               <Link
                 href="/promotions"
-                className="px-8 py-3 bg-white border-2 border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors font-medium"
+                className="px-8 py-3 bg-white border-2 border-primary text-blue rounded-lg hover:bg-primary hover:text-white transition-colors font-medium"
               >
                 View Promotions
               </Link>
