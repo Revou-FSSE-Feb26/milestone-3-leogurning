@@ -102,7 +102,7 @@ export default function ProductDetail({ id }) {
               height={300}
               src={product.image}
               alt={product.title}
-              className="w-full h-80 object-cover"
+              className="w-full h-150 object-cover"
             />
           </div>
 
