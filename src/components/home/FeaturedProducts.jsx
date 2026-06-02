@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { fetchProducts } from "@/lib/api";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -66,9 +68,10 @@ export default function FeaturedProducts() {
                 className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div className="relative aspect-square overflow-hidden bg-gray-100">
-                  <img
+                  <Image
                     src={product.image}
                     alt={product.title}
+                    fill
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {product.discount && (
@@ -105,19 +108,7 @@ export default function FeaturedProducts() {
             className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
           >
             View All Products
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </div>
