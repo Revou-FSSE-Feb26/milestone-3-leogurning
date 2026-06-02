@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function PromotionSection() {
   const promotions = [
     {
@@ -58,9 +60,15 @@ export default function PromotionSection() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="relative h-48 md:h-auto overflow-hidden">
-                  <img
+                  {/* <img
                     src={promotion.image}
                     alt={promotion.title}
+                    className="w-full h-full object-cover"
+                  /> */}
+                  <Image
+                    src={promotion.image}
+                    alt={promotion.title}
+                    fill
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent"></div>
