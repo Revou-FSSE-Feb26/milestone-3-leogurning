@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { fetchProductById } from "@/lib/api";
 import { addToCart } from "@/lib/cart";
-import { ArrowLeft, ShoppingBag, Star } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Star, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProductDetail({ id }) {
   const [product, setProduct] = useState(null);
@@ -96,10 +97,12 @@ export default function ProductDetail({ id }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
           <div className="bg-light rounded-xl overflow-hidden">
-            <img
+            <Image
+              width={300}
+              height={300}
               src={product.image}
               alt={product.title}
-              className="w-full h-full object-cover"
+              className="w-full h-80 object-cover"
             />
           </div>
 
@@ -180,35 +183,11 @@ export default function ProductDetail({ id }) {
             {/* Product Details */}
             <div className="border-t border-gray-200 pt-6 space-y-4">
               <div className="flex items-center gap-2 text-accent">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+                <CheckCircle className="w-5 h-5" />
                 <span>In stock - Ready to ship</span>
               </div>
               <div className="flex items-center gap-2 text-accent">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <Clock className="w-5 h-5" />
                 <span>Free returns within 30 days</span>
               </div>
             </div>

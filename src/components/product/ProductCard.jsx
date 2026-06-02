@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { addToCart, getCart } from "@/lib/cart";
+import { Plus, Check } from "lucide-react";
+import Image from "next/image";
 
 export default function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -43,7 +45,7 @@ export default function ProductCard({ product }) {
     setTimeout(() => {
       setIsAdding(false);
       setAdded(false);
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -52,7 +54,10 @@ export default function ProductCard({ product }) {
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <img
+        <Image
+          width={300}
+          height={300}
+          loading="eager"
           src={product.image}
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -65,7 +70,7 @@ export default function ProductCard({ product }) {
         {/* Added to cart notification */}
         {added && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <span className="bg-white text-secondary px-4 py-2 rounded-lg font-medium">
+            <span className="bg-primary text-white px-4 py-2 rounded-lg font-medium">
               Added to Cart!
             </span>
           </div>
@@ -95,23 +100,13 @@ export default function ProductCard({ product }) {
             aria-label="Add to cart"
           >
             {isAdding ? (
-              <span className="text-xs">Adding...</span>
+              <span className="text-xs text-white">Add...</span>
             ) : added ? (
-              <span className="text-xs">Added!</span>
+              <span className="text-xs text-white">Added!</span>
+            ) : added ? (
+              <Check className="w-5 h-5" />
             ) : (
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
+              <Plus className="w-5 h-5" />
             )}
           </button>
         </div>
