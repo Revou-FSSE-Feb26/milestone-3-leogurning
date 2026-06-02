@@ -9,11 +9,56 @@ export default function ContactPage() {
     subject: "",
     message: "",
   });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Validation functions
+  const validateField = (name, value) => {
+    switch (name) {
+      case "name":
+        return value.trim() ? "" : "Name is required";
+      case "email":
+        if (!value.trim()) return "Email is required";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(value)
+          ? ""
+          : "Please enter a valid email address";
+      case "subject":
+        return value.trim() ? "" : "Subject is required";
+      case "message":
+        return value.trim() ? "" : "Message is required";
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate all fields
+    const newErrors = {};
+    let hasError = false;
+
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+        hasError = true;
+      }
+    });
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
     setIsSubmitting(true);
 
     // Simulate form submission
@@ -32,6 +77,10 @@ export default function ContactPage() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (errors[e.target.name]) {
+      setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
   };
 
   return (
@@ -74,9 +123,15 @@ export default function ContactPage() {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Your name"
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
@@ -93,9 +148,15 @@ export default function ContactPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="your@email.com"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div>
@@ -112,9 +173,15 @@ export default function ContactPage() {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                    errors.subject ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="How can we help you?"
                 />
+                {errors.subject && (
+                  <p className="text-red-500 text-xs mt-1">{errors.subject}</p>
+                )}
               </div>
 
               <div>
@@ -131,9 +198,15 @@ export default function ContactPage() {
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                    errors.message ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Your message..."
                 />
+                {errors.message && (
+                  <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+                )}
               </div>
 
               <button
@@ -178,7 +251,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-secondary mb-1">Email</h3>
-                  <p className="text-accent">cs@leonshop.com</p>
+                  <p className="text-accent">support@leonshop.com</p>
                   <p className="text-accent">sales@leonshop.com</p>
                 </div>
               </div>
@@ -201,7 +274,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-secondary mb-1">Phone</h3>
-                  <p className="text-accent">+62 (21) 1234-5678</p>
+                  <p className="text-accent">+1 (555) 123-4567</p>
                   <p className="text-accent">Mon-Fri: 9am-6pm</p>
                 </div>
               </div>
@@ -232,8 +305,8 @@ export default function ContactPage() {
                   <h3 className="font-semibold text-secondary mb-1">
                     Location
                   </h3>
-                  <p className="text-accent">Jl Sudirman Kav 45, Blok H7</p>
-                  <p className="text-accent">Tangerang Selatan, Indonesia</p>
+                  <p className="text-accent">123 Shopping Street</p>
+                  <p className="text-accent">New York, NY 10001</p>
                 </div>
               </div>
             </div>
