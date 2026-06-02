@@ -25,6 +25,7 @@ function CheckoutContent() {
     expiryDate: "",
     cvc: "",
   });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const redirect = searchParams.get("redirect") || "/checkout";
@@ -77,10 +78,81 @@ function CheckoutContent() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (errors[e.target.name]) {
+      setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
+  };
+
+  // Validation functions
+  const validateField = (name, value) => {
+    switch (name) {
+      case "firstName":
+        return value.trim() ? "" : "First name is required";
+      case "lastName":
+        return value.trim() ? "" : "Last name is required";
+      case "email":
+        if (!value.trim()) return "Email is required";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(value)
+          ? ""
+          : "Please enter a valid email address";
+      case "address":
+        return value.trim() ? "" : "Address is required";
+      case "city":
+        return value.trim() ? "" : "City is required";
+      case "state":
+        return value.trim() ? "" : "State is required";
+      case "zipCode":
+        return value.trim() ? "" : "ZIP code is required";
+      case "cardName":
+        return value.trim() ? "" : "Name on card is required";
+      case "cardNumber":
+        if (!value.replace(/\s/g, "")) return "Card number is required";
+        const cardNumberRegex = /^\d{16}$/;
+        return cardNumberRegex.test(value.replace(/\s/g, ""))
+          ? ""
+          : "Please enter a valid 16-digit card number";
+      case "expiryDate":
+        if (!value.trim()) return "Expiry date is required";
+        const expiryRegex = /^(0[1-9]|1[0-2])\/?(\d{2})$/;
+        return expiryRegex.test(value)
+          ? ""
+          : "Please enter a valid expiry date (MM/YY)";
+      case "cvc":
+        if (!value.trim()) return "CVC is required";
+        return /^\d{3}$/.test(value) ? "" : "Please enter a valid 3-digit CVC";
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate all fields
+    const newErrors = {};
+    let hasError = false;
+
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+        hasError = true;
+      }
+    });
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
     setIsSubmitting(true);
 
     // Simulate checkout
@@ -151,8 +223,16 @@ function CheckoutContent() {
                       required
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.firstName ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.firstName}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -168,8 +248,16 @@ function CheckoutContent() {
                       required
                       value={formData.lastName}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.lastName ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -187,8 +275,14 @@ function CheckoutContent() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                      errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -205,8 +299,16 @@ function CheckoutContent() {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                      errors.address ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
+                  {errors.address && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.address}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
@@ -224,8 +326,14 @@ function CheckoutContent() {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.city ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.city && (
+                      <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -241,8 +349,16 @@ function CheckoutContent() {
                       required
                       value={formData.state}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.state ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.state && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.state}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -258,8 +374,16 @@ function CheckoutContent() {
                       required
                       value={formData.zipCode}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.zipCode ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.zipCode && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.zipCode}
+                      </p>
+                    )}
                   </div>
                 </div>
               </form>
@@ -271,7 +395,7 @@ function CheckoutContent() {
                 Payment Information
               </h2>
 
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="cardName"
@@ -286,8 +410,16 @@ function CheckoutContent() {
                     required
                     value={formData.cardName}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                      errors.cardName ? "border-red-500" : "border-gray-300"
+                    }`}
                   />
+                  {errors.cardName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.cardName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -306,10 +438,18 @@ function CheckoutContent() {
                       placeholder="0000 0000 0000 0000"
                       value={formData.cardNumber}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${
+                        errors.cardNumber ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
                     <CreditCard className="w-5 h-5 text-accent absolute left-3 top-2.5" />
                   </div>
+                  {errors.cardNumber && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.cardNumber}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -328,8 +468,16 @@ function CheckoutContent() {
                       placeholder="MM/YY"
                       value={formData.expiryDate}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                        errors.expiryDate ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
+                    {errors.expiryDate && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.expiryDate}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -347,10 +495,16 @@ function CheckoutContent() {
                         placeholder="123"
                         value={formData.cvc}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10"
+                        onBlur={handleBlur}
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${
+                          errors.cvc ? "border-red-500" : "border-gray-300"
+                        }`}
                       />
                       <Lock className="w-5 h-5 text-accent absolute left-3 top-2.5" />
                     </div>
+                    {errors.cvc && (
+                      <p className="text-red-500 text-xs mt-1">{errors.cvc}</p>
+                    )}
                   </div>
                 </div>
               </form>
