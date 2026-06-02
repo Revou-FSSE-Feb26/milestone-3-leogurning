@@ -1,26 +1,371 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #ff5722;
+  --color-primary-dark: #e64a19;
+  --color-secondary: #303841;
+  --color-accent: #76abae;
+  --color-light: #f5f5f5;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-light: var(--color-light);
+  --color-white: var(--color-white);
+  --color-black: var(--color-black);
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-600: var(--color-gray-600);
+  --color-gray-700: var(--color-gray-700);
+  --color-gray-800: var(--color-gray-800);
+  --color-gray-900: var(--color-gray-900);
+  --color-red-500: var(--color-red-500);
+  --color-red-600: var(--color-red-600);
+  --color-red-700: var(--color-red-700);
+  --color-green-500: var(--color-green-500);
+  --color-green-600: var(--color-green-600);
+  --color-blue-500: var(--color-blue-500);
+  --color-blue-600: var(--color-blue-600);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-white);
+  color: var(--color-secondary);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom utility classes */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-primary-dark {
+  color: var(--color-primary-dark);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-light {
+  color: var(--color-light);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-primary-dark {
+  background-color: var(--color-primary-dark);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-light {
+  background-color: var(--color-light);
+}
+
+.bg-white {
+  background-color: var(--color-white);
+}
+
+.bg-gray-100 {
+  background-color: var(--color-gray-100);
+}
+
+.bg-gray-200 {
+  background-color: var(--color-gray-200);
+}
+
+.bg-gray-300 {
+  background-color: var(--color-gray-300);
+}
+
+.bg-gray-400 {
+  background-color: var(--color-gray-400);
+}
+
+.bg-gray-500 {
+  background-color: var(--color-gray-500);
+}
+
+.bg-gray-600 {
+  background-color: var(--color-gray-600);
+}
+
+.bg-gray-700 {
+  background-color: var(--color-gray-700);
+}
+
+.bg-gray-800 {
+  background-color: var(--color-gray-800);
+}
+
+.bg-gray-900 {
+  background-color: var(--color-gray-900);
+}
+
+.bg-red-500 {
+  background-color: var(--color-red-500);
+}
+
+.bg-red-600 {
+  background-color: var(--color-red-600);
+}
+
+.bg-red-700 {
+  background-color: var(--color-red-700);
+}
+
+.bg-green-500 {
+  background-color: var(--color-green-500);
+}
+
+.bg-green-600 {
+  background-color: var(--color-green-600);
+}
+
+.bg-blue-500 {
+  background-color: var(--color-blue-500);
+}
+
+.bg-blue-600 {
+  background-color: var(--color-blue-600);
+}
+
+/* Hover states */
+.hover\:text-primary:hover {
+  color: var(--color-primary);
+}
+
+.hover\:text-primary-dark:hover {
+  color: var(--color-primary-dark);
+}
+
+.hover\:text-secondary:hover {
+  color: var(--color-secondary);
+}
+
+.hover\:text-accent:hover {
+  color: var(--color-accent);
+}
+
+.hover\:bg-primary:hover {
+  background-color: var(--color-primary);
+}
+
+.hover\:bg-primary-dark:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.hover\:bg-secondary:hover {
+  background-color: var(--color-secondary);
+}
+
+.hover\:bg-accent:hover {
+  background-color: var(--color-accent);
+}
+
+.hover\:bg-light:hover {
+  background-color: var(--color-light);
+}
+
+.hover\:bg-white:hover {
+  background-color: var(--color-white);
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: var(--color-gray-100);
+}
+
+.hover\:bg-gray-200:hover {
+  background-color: var(--color-gray-200);
+}
+
+.hover\:bg-gray-300:hover {
+  background-color: var(--color-gray-300);
+}
+
+.hover\:bg-gray-400:hover {
+  background-color: var(--color-gray-400);
+}
+
+.hover\:bg-gray-500:hover {
+  background-color: var(--color-gray-500);
+}
+
+.hover\:bg-gray-600:hover {
+  background-color: var(--color-gray-600);
+}
+
+.hover\:bg-gray-700:hover {
+  background-color: var(--color-gray-700);
+}
+
+.hover\:bg-gray-800:hover {
+  background-color: var(--color-gray-800);
+}
+
+.hover\:bg-gray-900:hover {
+  background-color: var(--color-gray-900);
+}
+
+.hover\:bg-red-500:hover {
+  background-color: var(--color-red-500);
+}
+
+.hover\:bg-red-600:hover {
+  background-color: var(--color-red-600);
+}
+
+.hover\:bg-red-700:hover {
+  background-color: var(--color-red-700);
+}
+
+.hover\:bg-green-500:hover {
+  background-color: var(--color-green-500);
+}
+
+.hover\:bg-green-600:hover {
+  background-color: var(--color-green-600);
+}
+
+.hover\:bg-blue-500:hover {
+  background-color: var(--color-blue-500);
+}
+
+.hover\:bg-blue-600:hover {
+  background-color: var(--color-blue-600);
+}
+
+/* Focus states */
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--color-primary);
+}
+
+.focus\:ring-primary-dark:focus {
+  --tw-ring-color: var(--color-primary-dark);
+}
+
+.focus\:ring-secondary:focus {
+  --tw-ring-color: var(--color-secondary);
+}
+
+.focus\:ring-accent:focus {
+  --tw-ring-color: var(--color-accent);
+}
+
+.focus\:ring-light:focus {
+  --tw-ring-color: var(--color-light);
+}
+
+.focus\:ring-white:focus {
+  --tw-ring-color: var(--color-white);
+}
+
+.focus\:ring-gray-100:focus {
+  --tw-ring-color: var(--color-gray-100);
+}
+
+.focus\:ring-gray-200:focus {
+  --tw-ring-color: var(--color-gray-200);
+}
+
+.focus\:ring-gray-300:focus {
+  --tw-ring-color: var(--color-gray-300);
+}
+
+.focus\:ring-gray-400:focus {
+  --tw-ring-color: var(--color-gray-400);
+}
+
+.focus\:ring-gray-500:focus {
+  --tw-ring-color: var(--color-gray-500);
+}
+
+.focus\:ring-gray-600:focus {
+  --tw-ring-color: var(--color-gray-600);
+}
+
+.focus\:ring-gray-700:focus {
+  --tw-ring-color: var(--color-gray-700);
+}
+
+.focus\:ring-gray-800:focus {
+  --tw-ring-color: var(--color-gray-800);
+}
+
+.focus\:ring-gray-900:focus {
+  --tw-ring-color: var(--color-gray-900);
+}
+
+.focus\:ring-red-500:focus {
+  --tw-ring-color: var(--color-red-500);
+}
+
+.focus\:ring-red-600:focus {
+  --tw-ring-color: var(--color-red-600);
+}
+
+.focus\:ring-red-700:focus {
+  --tw-ring-color: var(--color-red-700);
+}
+
+.focus\:ring-green-500:focus {
+  --tw-ring-color: var(--color-green-500);
+}
+
+.focus\:ring-green-600:focus {
+  --tw-ring-color: var(--color-green-600);
+}
+
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: var(--color-blue-500);
+}
+
+.focus\:ring-blue-600:focus {
+  --tw-ring-color: var(--color-blue-600);
 }
