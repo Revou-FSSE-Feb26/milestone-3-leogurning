@@ -40,10 +40,10 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   // Format price as IDR
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("id-ID", {
+  const formatPrice = (price, region, curr) => {
+    return new Intl.NumberFormat(region, {
       style: "currency",
-      currency: "IDR",
+      currency: curr,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -133,15 +133,23 @@ export default function AdminDashboard() {
     );
   });
 
+  // Sort products by created date (newest first)
+  // Use creationAt if available (from API), otherwise use updatedAt or fallback to id
+  const sortedProducts = filteredProducts.sort((a, b) => {
+    const dateA = new Date(a.creationAt || a.updatedAt || a.id).getTime();
+    const dateB = new Date(b.creationAt || b.updatedAt || b.id).getTime();
+    return dateB - dateA; // Descending order (newest first)
+  });
+
   // Reset page to 1 when search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedProducts = sortedProducts.slice(
     startIndex,
     startIndex + productsPerPage,
   );
@@ -155,10 +163,10 @@ export default function AdminDashboard() {
     try {
       const productData = {
         title: newProduct.title,
-        price: parseFloat(newProduct.price),
+        price: formatPrice(parseFloat(newProduct.price), "en-US", "USD"),
         description: newProduct.description,
         categoryId: newProduct.categoryId,
-        image: newProduct.image || "https://placehold.co/600x400",
+        image: newProduct.image,
       };
 
       const createdProduct = await createProduct(productData);
@@ -416,9 +424,6 @@ export default function AdminDashboard() {
                     #
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
                     Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
@@ -439,17 +444,6 @@ export default function AdminDashboard() {
                       {(currentPage - 1) * productsPerPage + index + 1}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-10 h-10 rounded overflow-hidden">
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleViewProduct(product)}
                         className="text-left text-sm text-primary hover:text-primary-dark font-medium hover:underline"
@@ -461,7 +455,7 @@ export default function AdminDashboard() {
                       {product.category}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
-                      {formatPrice(product.price)}
+                      {formatPrice(product.price, "en-US", "USD")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
@@ -565,7 +559,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-secondary mb-1">
-                  Price *
+                  Price * (USD)
                 </label>
                 <input
                   key="add-price"
@@ -840,11 +834,12 @@ export default function AdminDashboard() {
                   Image
                 </label>
                 <div>
-                  <img
+                  <Image
                     src={viewingProduct.image}
                     alt={viewingProduct.title}
                     width={400}
                     height={300}
+                    unoptimized
                     className="w-full h-48 md:h-64 object-cover rounded-lg"
                   />
                 </div>
@@ -873,7 +868,7 @@ export default function AdminDashboard() {
                     Price
                   </label>
                   <p className="text-primary font-medium">
-                    {formatPrice(viewingProduct.price)}
+                    {formatPrice(viewingProduct.price, "en-US", "USD")}
                   </p>
                 </div>
 

@@ -186,7 +186,7 @@ export async function fetchProductsPaginated({ offset = 0, limit = 10 } = {}) {
     return data.map((product) => ({
       id: product.id,
       title: product.title || product.name,
-      price: convertToIDR(product.price),
+      price: product.price,
       description: product.description || "",
       category: product.category?.name || product.category || "General",
       image: product.images?.[0] || product.image || "https://placehold.co/400",
