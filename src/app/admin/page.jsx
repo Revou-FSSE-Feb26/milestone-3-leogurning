@@ -39,7 +39,7 @@ export default function AdminDashboard() {
   const [notification, setNotification] = useState(null);
   const router = useRouter();
 
-  // Format price as IDR
+  // Format price based on input
   const formatPrice = (price, region, curr) => {
     return new Intl.NumberFormat(region, {
       style: "currency",
@@ -49,12 +49,12 @@ export default function AdminDashboard() {
     }).format(price);
   };
 
-  // Format price for display (with dots as thousand separator)
-  const formatPriceDisplay = (price) => {
+  // Format price for display (based on input)
+  const formatPriceDisplay = (price, region) => {
     if (!price) return "";
     const num = parseFloat(price);
     if (isNaN(num)) return "";
-    return num.toLocaleString("id-ID");
+    return num.toLocaleString(region);
   };
 
   // Parse formatted price back to number
@@ -565,7 +565,7 @@ export default function AdminDashboard() {
                   key="add-price"
                   type="text"
                   inputMode="numeric"
-                  value={formatPriceDisplay(newProduct.price)}
+                  value={formatPriceDisplay(newProduct.price, "en-US")}
                   onChange={(e) =>
                     setNewProduct({
                       ...newProduct,
@@ -689,7 +689,7 @@ export default function AdminDashboard() {
                   key="edit-price"
                   type="text"
                   inputMode="numeric"
-                  value={formatPriceDisplay(newProduct.price)}
+                  value={formatPriceDisplay(newProduct.price, "en-US")}
                   onChange={(e) =>
                     setNewProduct({
                       ...newProduct,
