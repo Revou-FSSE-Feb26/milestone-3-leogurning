@@ -228,7 +228,7 @@ export async function createProduct(productData) {
     return {
       id: data.id,
       title: data.title || data.name,
-      price: convertToIDR(data.price),
+      price: data.price,
       description: data.description || "",
       category: data.category?.name || data.category || "General",
       image: data.images?.[0] || data.image || "https://placehold.co/400",
@@ -289,7 +289,7 @@ export async function updateProduct(id, productData) {
     return {
       id: data.id,
       title: data.title || data.name,
-      price: convertToIDR(data.price),
+      price: data.price,
       description: data.description || "",
       category: data.category?.name || data.category || "General",
       image: data.images?.[0] || data.image || "https://placehold.co/400",

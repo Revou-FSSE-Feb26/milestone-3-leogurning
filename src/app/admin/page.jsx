@@ -49,19 +49,20 @@ export default function AdminDashboard() {
     }).format(price);
   };
 
-  // Format price for display (based on input)
+  // Format price for display (based on input) - adds thousand separators
   const formatPriceDisplay = (price, region) => {
-    if (!price) return "";
+    if (!price && price !== 0) return "";
     const num = parseFloat(price);
     if (isNaN(num)) return "";
+    // Format with thousand separators for display
     return num.toLocaleString(region);
   };
 
-  // Parse formatted price back to number
-  const parsePrice = (formattedPrice) => {
-    if (!formattedPrice) return "";
-    // Remove dots (thousand separators) and convert to number
-    return formattedPrice.replace(/\./g, "");
+  // Handle price input change - stores raw number
+  const handlePriceInputChange = (value) => {
+    // Remove any non-numeric characters except decimal point
+    const numericValue = value.replace(/[^0-9.]/g, "");
+    return numericValue;
   };
 
   // Load products from Escuela JS API
@@ -163,7 +164,7 @@ export default function AdminDashboard() {
     try {
       const productData = {
         title: newProduct.title,
-        price: formatPrice(parseFloat(newProduct.price), "en-US", "USD"),
+        price: parseFloat(newProduct.price),
         description: newProduct.description,
         categoryId: newProduct.categoryId,
         image: newProduct.image,
@@ -564,22 +565,24 @@ export default function AdminDashboard() {
                 <input
                   key="add-price"
                   type="text"
-                  inputMode="numeric"
+                  inputMode="decimal"
+                  placeholder="Enter price (e.g., 1299.99)"
                   value={formatPriceDisplay(newProduct.price, "en-US")}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const rawValue = handlePriceInputChange(e.target.value);
                     setNewProduct({
                       ...newProduct,
-                      price: parsePrice(e.target.value),
-                    })
-                  }
-                  onBlur={(e) =>
+                      price: rawValue,
+                    });
+                  }}
+                  onBlur={(e) => {
+                    const rawValue = handlePriceInputChange(e.target.value);
                     setNewProduct({
                       ...newProduct,
-                      price: parsePrice(e.target.value),
-                    })
-                  }
+                      price: rawValue,
+                    });
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="0"
                 />
               </div>
               <div>
@@ -683,27 +686,29 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-secondary mb-1">
-                  Price *
+                  Price * (USD)
                 </label>
                 <input
                   key="edit-price"
                   type="text"
-                  inputMode="numeric"
+                  inputMode="decimal"
+                  placeholder="Enter price (e.g., 1299.99)"
                   value={formatPriceDisplay(newProduct.price, "en-US")}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const rawValue = handlePriceInputChange(e.target.value);
                     setNewProduct({
                       ...newProduct,
-                      price: parsePrice(e.target.value),
-                    })
-                  }
-                  onBlur={(e) =>
+                      price: rawValue,
+                    });
+                  }}
+                  onBlur={(e) => {
+                    const rawValue = handlePriceInputChange(e.target.value);
                     setNewProduct({
                       ...newProduct,
-                      price: parsePrice(e.target.value),
-                    })
-                  }
+                      price: rawValue,
+                    });
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="0"
                 />
               </div>
               <div>
