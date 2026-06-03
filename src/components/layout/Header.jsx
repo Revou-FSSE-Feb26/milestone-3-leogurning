@@ -183,7 +183,7 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-[#303841]"
+              className="md:hidden p-2 text-secondary"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -203,23 +203,23 @@ export default function Header() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="block px-3 py-2 text-[#303841] hover:bg-[#F5F5F5] rounded-md"
+                className="block px-3 py-2 text-secondary hover:bg-light rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.name}
               </Link>
             ))}
             {currentUser ? (
-              <div className="px-3 py-2 text-[#303841]">
+              <div className="px-3 py-2 text-secondary">
                 <p className="font-medium">{currentUser.name}</p>
-                <p className="text-sm text-[#76ABAE]">
+                <p className="text-sm text-accent">
                   {currentUser.role === "admin" ? "Admin" : "Customer"}
                 </p>
               </div>
             ) : (
               <Link
                 href="/login"
-                className="block px-3 py-2 text-[#303841] hover:bg-[#F5F5F5] rounded-md"
+                className="block px-3 py-2 text-secondary hover:bg-light rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sign In
