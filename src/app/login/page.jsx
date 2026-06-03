@@ -38,7 +38,6 @@ function LoginContent() {
       const result = await auth.login(email, password);
 
       if (result.success) {
-        window.dispatchEvent(new Event("auth:change"));
         const user = auth.getCurrentUser();
 
         if (user?.role === "admin") {

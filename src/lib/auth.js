@@ -13,6 +13,8 @@ export const auth = {
       if (result.success) {
         this.user = result.user;
         localStorage.setItem(AUTH_KEY, JSON.stringify(this.user));
+        // Dispatch auth change event to update auth-dependent components
+        window.dispatchEvent(new CustomEvent("auth:change"));
         return { success: true, user: this.user };
       }
 
@@ -29,11 +31,18 @@ export const auth = {
     localStorage.removeItem("leonshop_cart");
     sessionStorage.clear();
 
+    // Dispatch auth change event to update auth-dependent components
+    window.dispatchEvent(new CustomEvent("auth:change"));
     // Dispatch cart change event to update cart count
     window.dispatchEvent(new CustomEvent("cart:change"));
   },
 
   getCurrentUser() {
+    // Return null if running on server (no localStorage available)
+    if (typeof window === "undefined") {
+      return null;
+    }
+
     if (!this.user) {
       const stored = localStorage.getItem(AUTH_KEY);
       if (stored) {

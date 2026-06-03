@@ -1,8 +1,31 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { auth } from "@/lib/auth";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const user = auth.getCurrentUser();
+    setCurrentUser(user);
+
+    const handleAuthChange = () => {
+      const user = auth.getCurrentUser();
+      setCurrentUser(user);
+    };
+
+    window.addEventListener("auth:change", handleAuthChange);
+    return () => {
+      window.removeEventListener("auth:change", handleAuthChange);
+    };
+  }, []);
+
+  // Hide Quick Links and Contact Us for admin users
+  const isAdmin = currentUser?.role === "admin";
 
   return (
     <footer className="bg-secondary text-white">
@@ -32,59 +55,63 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="text-accent hover:text-white transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products"
-                  className="text-accent hover:text-white transition-colors"
-                >
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/promotions"
-                  className="text-accent hover:text-white transition-colors"
-                >
-                  Promotions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/faq"
-                  className="text-accent hover:text-white transition-colors"
-                >
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Quick Links - hidden for admin */}
+          {!isAdmin && (
+            <div>
+              <h3 className="font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/"
+                    className="text-accent hover:text-white transition-colors"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/products"
+                    className="text-accent hover:text-white transition-colors"
+                  >
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/promotions"
+                    className="text-accent hover:text-white transition-colors"
+                  >
+                    Promotions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/faq"
+                    className="text-accent hover:text-white transition-colors"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
 
-          {/* Customer Service */}
-          <div>
-            <h3 className="font-semibold mb-4">Customer Service</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-accent hover:text-white transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Customer Service - hidden for admin */}
+          {!isAdmin && (
+            <div>
+              <h3 className="font-semibold mb-4">Customer Service</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-accent hover:text-white transition-colors"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Bottom */}
