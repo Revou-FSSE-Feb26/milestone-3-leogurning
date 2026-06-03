@@ -135,7 +135,7 @@ The application uses a specific pastel color scheme:
 
 ## Currency
 
-All prices are displayed in **Indonesian Rupiah (IDR)** using proper formatting with thousand separators (dots).
+For the customer, All prices are displayed in **Indonesian Rupiah (IDR)** using proper formatting with thousand separators (dots).
 
 ## API Integration
 
@@ -148,6 +148,8 @@ Uses **Platzi Fake Store API** for product data:
 - Product by ID: `https://fakestoreapi.com/products/{id}`
 - Related products: `https://fakestoreapi.com/products/{id}/related`
 
+For customer, All prices from external APIs are converted from USD to IDR (1 USD = 15,000 IDR).
+
 ### Admin Dashboard
 
 Uses **Escuela JS API** for CRUD operations:
@@ -157,8 +159,6 @@ Uses **Escuela JS API** for CRUD operations:
 - PUT product: `https://api.escuelajs.co/api/v1/products/{id}`
 - DELETE product: `https://api.escuelajs.co/api/v1/products/{id}`
 - GET categories: `https://api.escuelajs.co/api/v1/categories`
-
-All prices from external APIs are converted from USD to IDR (1 USD = 15,000 IDR).
 
 ## Authentication
 
@@ -208,24 +208,24 @@ The application includes a mock authentication system:
 
 ## Features Implementation
 
-✅ Home Page with Hero Section and Featured Products
-✅ Product Listing Grid with Search and Filter
-✅ Product Detail Page with Dynamic Routing
-✅ Cart Management (Local Storage)
-✅ Promotions Page
-✅ FAQ Section
-✅ Responsive Design
-✅ User Authentication (Customer & Admin)
-✅ Admin Dashboard with Search and Pagination
-✅ Product Management (Admin) via Escuela JS API
-✅ Shopping Cart
-✅ Checkout Process with Validation
-✅ Contact Page with Validation
-✅ Order Success Page
-✅ Lucide Icons Integration
-✅ Next.js Image Optimization
-✅ Src folder structure
-✅ Next.js 16 App Router
+- ✅ Home Page with Hero Section and Featured Products
+- ✅ Product Listing Grid with Search and Filter
+- ✅ Product Detail Page with Dynamic Routing
+- ✅ Cart Management (Local Storage)
+- ✅ Promotions Page
+- ✅ FAQ Section
+- ✅ Responsive Design
+- ✅ User Authentication (Customer & Admin)
+- ✅ Admin Dashboard with Search and Pagination
+- ✅ Product Management (Admin) via Escuela JS API
+- ✅ Shopping Cart
+- ✅ Checkout Process with Validation
+- ✅ Contact Page with Validation
+- ✅ Order Success Page
+- ✅ Lucide Icons Integration
+- ✅ Next.js Image Optimization
+- ✅ Src folder structure
+- ✅ Next.js 16 App Router
 
 ## Author
 
