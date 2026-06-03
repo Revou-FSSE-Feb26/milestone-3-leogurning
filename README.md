@@ -2,9 +2,19 @@
 
 A modern e-commerce platform built with Next.js 16 App Router, featuring product browsing, cart management, user authentication, and admin dashboard.
 
+---
+
+## Live Demo
+
+Check it out here: [https://leonshop.netlify.app/]
+
+---
+
 ## Overview
 
 LeonShop is a fully functional online store application built with following Next.js. The application provides a seamless shopping experience for customers with product browsing, detailed product pages, cart management, and an admin dashboard for product management.
+
+---
 
 ## Features
 
@@ -27,6 +37,8 @@ LeonShop is a fully functional online store application built with following Nex
 - **Search Functionality**: Search products by name, description, or category
 - **Pagination**: View 10 products per page
 
+---
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router with src folder)
@@ -36,6 +48,8 @@ LeonShop is a fully functional online store application built with following Nex
 - **APIs**:
   - Platzi Fake Store API (customer-facing products)
   - Escuela JS API (admin product CRUD operations)
+
+---
 
 ## Project Structure
 
@@ -72,6 +86,8 @@ leon-shop/
 ├── package.json           # Dependencies and scripts
 └── README.md              # App documentation
 ```
+
+---
 
 ## Getting Started
 
@@ -124,6 +140,8 @@ bun run build
 bun start
 ```
 
+---
+
 ## Color Palette
 
 The application uses a specific pastel color scheme:
@@ -136,6 +154,8 @@ The application uses a specific pastel color scheme:
 ## Currency
 
 For the customer, All prices are displayed in **Indonesian Rupiah (IDR)** using proper formatting with thousand separators (dots).
+
+---
 
 ## API Integration
 
@@ -160,6 +180,8 @@ Uses **Escuela JS API** for CRUD operations:
 - DELETE product: `https://api.escuelajs.co/api/v1/products/{id}`
 - GET categories: `https://api.escuelajs.co/api/v1/categories`
 
+---
+
 ## Authentication
 
 The application includes a mock authentication system:
@@ -167,6 +189,8 @@ The application includes a mock authentication system:
 - **Admin Login**: Specific user admin is set to do Product management
 - **Customer Login**: Any email/password creates can do login as customer account
 - Redirects to previous page after login (cart/checkout)
+
+---
 
 ## Screenshots
 
@@ -190,6 +214,8 @@ The application includes a mock authentication system:
 
 ![Admin Add Product](./screenshots/Admin-add-product.png)
 
+---
+
 ## Validation
 
 ### Checkout Page
@@ -205,6 +231,8 @@ The application includes a mock authentication system:
 - Name, email, subject, and message are required
 - Email format validation
 - Errors displayed below input fields
+
+---
 
 ## Features Implementation
 
@@ -226,6 +254,8 @@ The application includes a mock authentication system:
 - ✅ Next.js Image Optimization
 - ✅ Src folder structure
 - ✅ Next.js 16 App Router
+
+---
 
 ## Author
 
