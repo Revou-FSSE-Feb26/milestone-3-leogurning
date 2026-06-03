@@ -123,7 +123,7 @@ export async function fetchUsers() {
     {
       id: 1,
       email: "admin@leonshop.com",
-      password: "admin123",
+      password: "@dmin12E4",
       name: "Admin User",
       role: "admin",
       createdAt: "2024-01-01T00:00:00.000Z",
@@ -152,16 +152,11 @@ export async function authenticateUser(email, password) {
 
   // Check if it's an admin email (admin@leonshop.com)
   if (email === "admin@leonshop.com" && password) {
-    // Create admin user if doesn't exist
-    const adminUser = {
-      id: 1,
-      email: "admin@leonshop.com",
-      password: password,
-      name: "Admin User",
-      role: "admin",
-      createdAt: new Date().toISOString(),
+    // Return error for non-existent admin user (don't create automatically)
+    return {
+      success: false,
+      message: "Invalid email or password. Please try again.",
     };
-    return { success: true, user: adminUser };
   }
 
   // Create new customer user if doesn't exist
