@@ -6,6 +6,7 @@ import { getCart, clearCart } from "@/lib/cart";
 import { ArrowLeft, CreditCard, Lock } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { escapeHtml } from "@/lib/api";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -76,7 +77,7 @@ function CheckoutContent() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: escapeHtml(e.target.value),
     });
     // Clear error when user types
     if (errors[e.target.name]) {
@@ -154,6 +155,8 @@ function CheckoutContent() {
     }
 
     setIsSubmitting(true);
+    // In a real application, you would send this data to your backend here
+    console.log("Checkout data: ", { ...formData, total: calculateTotal() });
 
     // Simulate checkout
     setTimeout(() => {

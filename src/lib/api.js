@@ -12,6 +12,16 @@ const convertToIDR = (usdPrice) => {
   return Math.round(usdPrice * USD_TO_IDR_RATE);
 };
 
+/** Prevent XSS in user-supplied strings. */
+export function escapeHtml(str) {
+  // Convert special characters to HTML entities to prevent XSS attacks when rendering user-supplied strings in the DOM.
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function fetchProducts() {
   try {
     const response = await fetch(`${API_URL}/products`);

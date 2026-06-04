@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { escapeHtml } from "@/lib/api";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -61,6 +62,7 @@ export default function ContactPage() {
     }
 
     setIsSubmitting(true);
+    console.log("Form data: ", formData);
 
     // Simulate form submission
     setTimeout(() => {
@@ -76,7 +78,7 @@ export default function ContactPage() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: escapeHtml(e.target.value),
     });
     // Clear error when user types
     if (errors[e.target.name]) {
