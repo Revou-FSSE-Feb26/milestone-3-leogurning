@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function PromotionSection() {
   const promotions = [
@@ -83,12 +84,12 @@ export default function PromotionSection() {
                     {promotion.title}
                   </h3>
                   <p className="text-accent mb-4">{promotion.description}</p>
-                  <a
+                  <Link
                     href="/products"
                     className="text-primary font-medium hover:text-primary-dark transition-colors inline-flex items-center gap-1"
                   >
                     Shop Promotion →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

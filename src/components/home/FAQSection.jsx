@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -80,12 +81,12 @@ export default function FAQSection() {
           <p className="text-accent mb-4">
             Still have questions? Contact our support team
           </p>
-          <a
+          <Link
             href="/contact"
             className="inline-block px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </section>
