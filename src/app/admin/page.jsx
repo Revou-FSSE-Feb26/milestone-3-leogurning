@@ -12,10 +12,13 @@ import {
 } from "@/lib/api";
 import { Edit, Trash2, Search, X } from "lucide-react";
 import Image from "next/image";
+import AddProductModal from "@/components/admin/AddProductModal";
+import EditProductModal from "@/components/admin/EditProductModal";
+import DeleteConfirmationModal from "@/components/admin/DeleteConfirmationModal";
+import ViewProductModal from "@/components/admin/ViewProductModal";
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -71,7 +74,6 @@ export default function AdminDashboard() {
       setLoading(true);
       const data = await fetchProductsPaginated({ limit: 100 });
       setProducts(data);
-      setAllProducts(data);
     } catch (error) {
       console.error("Error loading products:", error);
       // Fallback to localStorage if API fails
@@ -80,7 +82,6 @@ export default function AdminDashboard() {
         if (stored) {
           const storedData = JSON.parse(stored);
           setProducts(storedData);
-          setAllProducts(storedData);
         }
       } catch (localError) {
         console.error("Error loading from localStorage:", localError);
@@ -175,7 +176,6 @@ export default function AdminDashboard() {
       // Update local state
       const updatedProducts = [...products, createdProduct];
       setProducts(updatedProducts);
-      setAllProducts(updatedProducts);
 
       // Save to localStorage as backup
       try {
@@ -265,7 +265,6 @@ export default function AdminDashboard() {
           : p,
       );
       setProducts(updatedProducts);
-      setAllProducts(updatedProducts);
 
       // Save to localStorage as backup
       try {
@@ -309,7 +308,6 @@ export default function AdminDashboard() {
           (p) => p.id !== productToDelete,
         );
         setProducts(updatedProducts);
-        setAllProducts(updatedProducts);
 
         // Save to localStorage as backup
         try {
@@ -533,391 +531,43 @@ export default function AdminDashboard() {
       </div>
 
       {/* Add Product Modal */}
-      {showAddModal && (
-        <div
-          key="add-modal"
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-        >
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold text-secondary mb-4">
-              Add New Product
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Title *
-                </label>
-                <input
-                  key="add-title"
-                  type="text"
-                  value={newProduct.title}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, title: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="Product title"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Price * (USD)
-                </label>
-                <input
-                  key="add-price"
-                  type="text"
-                  inputMode="decimal"
-                  placeholder="Enter price (e.g., 1299.99)"
-                  value={formatPriceDisplay(newProduct.price, "en-US")}
-                  onChange={(e) => {
-                    const rawValue = handlePriceInputChange(e.target.value);
-                    setNewProduct({
-                      ...newProduct,
-                      price: rawValue,
-                    });
-                  }}
-                  onBlur={(e) => {
-                    const rawValue = handlePriceInputChange(e.target.value);
-                    setNewProduct({
-                      ...newProduct,
-                      price: rawValue,
-                    });
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Description
-                </label>
-                <textarea
-                  key="add-description"
-                  value={newProduct.description}
-                  onChange={(e) =>
-                    setNewProduct({
-                      ...newProduct,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="Product description"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Category
-                </label>
-                <select
-                  key="add-category"
-                  value={newProduct.categoryId || 1}
-                  onChange={(e) =>
-                    setNewProduct({
-                      ...newProduct,
-                      categoryId: parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Image URL
-                </label>
-                <input
-                  key="add-image"
-                  type="text"
-                  value={newProduct.image}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, image: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddProduct}
-                className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-              >
-                Add Product
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AddProductModal
+        showAddModal={showAddModal}
+        setShowAddModal={setShowAddModal}
+        newProduct={newProduct}
+        setNewProduct={setNewProduct}
+        categories={categories}
+        formatPriceDisplay={formatPriceDisplay}
+        handlePriceInputChange={handlePriceInputChange}
+        handleAddProduct={handleAddProduct}
+      />
 
       {/* Edit Product Modal */}
-      {showEditModal && (
-        <div
-          key="edit-modal"
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-        >
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold text-secondary mb-4">
-              Edit Product
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Title *
-                </label>
-                <input
-                  key="edit-title"
-                  type="text"
-                  value={newProduct.title}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, title: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="Product title"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Price * (USD)
-                </label>
-                <input
-                  key="edit-price"
-                  type="text"
-                  inputMode="decimal"
-                  placeholder="Enter price (e.g., 1299.99)"
-                  value={formatPriceDisplay(newProduct.price, "en-US")}
-                  onChange={(e) => {
-                    const rawValue = handlePriceInputChange(e.target.value);
-                    setNewProduct({
-                      ...newProduct,
-                      price: rawValue,
-                    });
-                  }}
-                  onBlur={(e) => {
-                    const rawValue = handlePriceInputChange(e.target.value);
-                    setNewProduct({
-                      ...newProduct,
-                      price: rawValue,
-                    });
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Description
-                </label>
-                <textarea
-                  key="edit-description"
-                  value={newProduct.description}
-                  onChange={(e) =>
-                    setNewProduct({
-                      ...newProduct,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="Product description"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Category
-                </label>
-                <select
-                  key="edit-category"
-                  value={newProduct.categoryId || 1}
-                  onChange={(e) =>
-                    setNewProduct({
-                      ...newProduct,
-                      categoryId: parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1">
-                  Image URL
-                </label>
-                <input
-                  key="edit-image"
-                  type="text"
-                  value={newProduct.image}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, image: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdateProduct}
-                className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-              >
-                Update Product
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditProductModal
+        showEditModal={showEditModal}
+        setShowEditModal={setShowEditModal}
+        newProduct={newProduct}
+        setNewProduct={setNewProduct}
+        categories={categories}
+        formatPriceDisplay={formatPriceDisplay}
+        handlePriceInputChange={handlePriceInputChange}
+        handleUpdateProduct={handleUpdateProduct}
+      />
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold text-secondary mb-2">
-              Confirm Deletion
-            </h2>
-            <p className="text-accent mb-6">
-              Are you sure you want to delete this product? This action cannot
-              be undone.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={cancelDelete}
-                className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteProduct}
-                className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmationModal
+        showDeleteModal={showDeleteModal}
+        cancelDelete={cancelDelete}
+        confirmDeleteProduct={confirmDeleteProduct}
+      />
 
       {/* View Product Modal */}
-      {showViewModal && viewingProduct && (
-        <div
-          key="view-modal"
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-        >
-          <div className="bg-white p-6 rounded-xl max-w-2xl w-full mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-secondary">
-                Product Details
-              </h2>
-              <button
-                onClick={() => setShowViewModal(false)}
-                className="text-accent hover:text-primary"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Product Image */}
-              <div className="md:w-1/3">
-                <label className="block text-sm font-medium text-secondary mb-2">
-                  Image
-                </label>
-                <div>
-                  <Image
-                    src={viewingProduct.image}
-                    alt={viewingProduct.title}
-                    width={400}
-                    height={300}
-                    unoptimized
-                    className="w-full h-48 md:h-64 object-cover rounded-lg"
-                  />
-                </div>
-              </div>
-
-              {/* Product Details */}
-              <div className="md:w-2/3 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Product ID
-                  </label>
-                  <p className="text-accent">#{viewingProduct.id}</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Title
-                  </label>
-                  <p className="text-secondary font-medium">
-                    {viewingProduct.title}
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Price
-                  </label>
-                  <p className="text-primary font-medium">
-                    {formatPrice(viewingProduct.price, "en-US", "USD")}
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Category
-                  </label>
-                  <p className="text-accent">{viewingProduct.category}</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Description
-                  </label>
-                  <p className="text-secondary">{viewingProduct.description}</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-1">
-                    Rating
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary">
-                      {"★".repeat(Math.round(viewingProduct.rating?.rate || 0))}
-                    </span>
-                    <span className="text-accent">
-                      ({viewingProduct.rating?.count || 0} reviews)
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowViewModal(false)}
-                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ViewProductModal
+        showViewModal={showViewModal}
+        setShowViewModal={setShowViewModal}
+        viewingProduct={viewingProduct}
+        formatPrice={formatPrice}
+      />
     </div>
   );
 }
