@@ -161,7 +161,7 @@ export async function authenticateUser(email, password) {
   }
 
   // Check if it's an admin email (admin@leonshop.com)
-  if (email === "admin@leonshop.com" && password) {
+  if (email === "admin@leonshop.com") {
     // Return error for non-existent admin user (don't create automatically)
     return {
       success: false,
