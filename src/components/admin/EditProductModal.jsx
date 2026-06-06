@@ -2,13 +2,13 @@
 
 export default function EditProductModal({
   showEditModal,
-  setShowEditModal,
   newProduct,
   setNewProduct,
   categories,
   formatPriceDisplay,
   handlePriceInputChange,
   handleUpdateProduct,
+  cancelUpdateProduct,
 }) {
   if (!showEditModal) return null;
 
@@ -85,7 +85,7 @@ export default function EditProductModal({
             </label>
             <select
               key="edit-category"
-              value={newProduct.categoryId || 1}
+              value={newProduct.categoryId}
               onChange={(e) =>
                 setNewProduct({
                   ...newProduct,
@@ -119,7 +119,7 @@ export default function EditProductModal({
         </div>
         <div className="flex gap-4 mt-6">
           <button
-            onClick={() => setShowEditModal(false)}
+            onClick={cancelUpdateProduct}
             className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
           >
             Cancel

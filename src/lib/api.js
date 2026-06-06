@@ -199,6 +199,7 @@ export async function fetchProductsPaginated({ offset = 0, limit = 10 } = {}) {
       price: product.price,
       description: product.description || "",
       category: product.category?.name || product.category || "General",
+      categoryId: product.category?.id || 1,
       image: product.images?.[0] || product.image || "https://placehold.co/400",
       rating: {
         rate: product.rating?.rate || 0,

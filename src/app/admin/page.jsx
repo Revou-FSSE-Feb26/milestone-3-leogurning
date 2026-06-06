@@ -11,7 +11,6 @@ import {
   fetchCategoriesEscuela,
 } from "@/lib/api";
 import { Edit, Trash2, Search, X } from "lucide-react";
-import Image from "next/image";
 import AddProductModal from "@/components/admin/AddProductModal";
 import EditProductModal from "@/components/admin/EditProductModal";
 import DeleteConfirmationModal from "@/components/admin/DeleteConfirmationModal";
@@ -205,7 +204,22 @@ export default function AdminDashboard() {
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
-    // Reset form to empty state first, then populate with product data
+    // Set product to be editted
+    setNewProduct({
+      title: product.title,
+      price: product.price,
+      description: product.description,
+      category: product.category || "",
+      image: product.image || "",
+      categoryId: product.categoryId || 1,
+    });
+
+    setShowEditModal(true);
+  };
+
+  // Cancel edit mode and reset form inputs
+  const cancelEdit = () => {
+    setEditingProduct(null);
     setNewProduct({
       title: "",
       price: "",
@@ -214,18 +228,7 @@ export default function AdminDashboard() {
       image: "",
       categoryId: 1,
     });
-    // Small delay to ensure form resets before populating
-    setTimeout(() => {
-      setNewProduct({
-        title: product.title,
-        price: product.price,
-        description: product.description,
-        category: product.category || "",
-        image: product.image || "",
-        categoryId: product.categoryId || 1,
-      });
-    }, 0);
-    setShowEditModal(true);
+    setShowEditModal(false);
   };
 
   const handleViewProduct = (product) => {
@@ -250,6 +253,11 @@ export default function AdminDashboard() {
 
       await updateProduct(editingProduct.id, productData);
 
+      // Get category name from categoryId
+      const categoryName =
+        categories.find((c) => c.id === newProduct.categoryId)?.name ||
+        newProduct.category;
+
       // Update local state
       const updatedProducts = products.map((p) =>
         p.id === editingProduct.id
@@ -258,9 +266,9 @@ export default function AdminDashboard() {
               title: newProduct.title,
               price: parseFloat(newProduct.price),
               description: newProduct.description,
-              category: newProduct.category,
-              image: newProduct.image,
+              category: categoryName,
               categoryId: newProduct.categoryId,
+              image: newProduct.image,
             }
           : p,
       );
@@ -545,13 +553,13 @@ export default function AdminDashboard() {
       {/* Edit Product Modal */}
       <EditProductModal
         showEditModal={showEditModal}
-        setShowEditModal={setShowEditModal}
         newProduct={newProduct}
         setNewProduct={setNewProduct}
         categories={categories}
         formatPriceDisplay={formatPriceDisplay}
         handlePriceInputChange={handlePriceInputChange}
         handleUpdateProduct={handleUpdateProduct}
+        cancelUpdateProduct={cancelEdit}
       />
 
       {/* Delete Confirmation Modal */}
