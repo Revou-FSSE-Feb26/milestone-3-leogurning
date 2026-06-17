@@ -2,7 +2,7 @@
 const API_URL = "https://fakestoreapi.com";
 
 // Escuela JS API base URL for admin operations
-const ESCUELA_API_URL = "https://api.escuelajs.co/api/v1/products";
+const ESCUELA_API_URL = "https://api.escuelajs.co/api/v1";
 
 // Exchange rate: 1 USD = 15,000 IDR (fixed rate for simplicity)
 const USD_TO_IDR_RATE = 15000;
@@ -14,12 +14,18 @@ const convertToIDR = (usdPrice) => {
 
 /** Prevent XSS in user-supplied strings. */
 export function escapeHtml(str) {
+  if (!str) return "";
+
   // Convert special characters to HTML entities to prevent XSS attacks when rendering user-supplied strings in the DOM.
-  return String(str)
+  if (typeof str !== "string") {
+    str = String(str);
+  }
+  return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 export async function fetchProducts() {
@@ -186,7 +192,7 @@ export async function authenticateUser(email, password) {
 export async function fetchProductsPaginated({ offset = 0, limit = 10 } = {}) {
   try {
     const response = await fetch(
-      `${ESCUELA_API_URL}?offset=${offset}&limit=${limit}`,
+      `${ESCUELA_API_URL}/products?offset=${offset}&limit=${limit}`,
     );
     if (!response.ok) {
       throw new Error("Failed to fetch products");
@@ -214,7 +220,7 @@ export async function fetchProductsPaginated({ offset = 0, limit = 10 } = {}) {
 
 export async function createProduct(productData) {
   try {
-    const response = await fetch(ESCUELA_API_URL, {
+    const response = await fetch(ESCUELA_API_URL + "/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -259,7 +265,7 @@ export async function updateProduct(id, productData) {
     // Fetch the existing product to get its slug, categoryId, and images
     let existingProduct = null;
     try {
-      const existingResponse = await fetch(`${ESCUELA_API_URL}/${id}`);
+      const existingResponse = await fetch(`${ESCUELA_API_URL}/products/${id}`);
       if (existingResponse.ok) {
         existingProduct = await existingResponse.json();
       }
@@ -282,7 +288,7 @@ export async function updateProduct(id, productData) {
           : [productData.image || "https://placehold.co/600x400"]),
     };
 
-    const response = await fetch(`${ESCUELA_API_URL}/${id}`, {
+    const response = await fetch(`${ESCUELA_API_URL}/products/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -317,7 +323,7 @@ export async function updateProduct(id, productData) {
 
 export async function deleteProduct(id) {
   try {
-    const response = await fetch(`${ESCUELA_API_URL}/${id}`, {
+    const response = await fetch(`${ESCUELA_API_URL}/products/${id}`, {
       method: "DELETE",
     });
 
@@ -348,7 +354,7 @@ export async function fetchRelatedProducts(id) {
 
 export async function fetchCategoriesEscuela() {
   try {
-    const response = await fetch("https://api.escuelajs.co/api/v1/categories");
+    const response = await fetch(ESCUELA_API_URL + "/categories");
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }

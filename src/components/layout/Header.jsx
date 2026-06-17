@@ -49,8 +49,8 @@ export default function Header() {
     };
     window.addEventListener("scroll", handleScroll);
 
-    const checkAuth = () => {
-      const user = auth.getCurrentUser();
+    const checkAuth = async () => {
+      const user = await auth.getCurrentUser();
       setCurrentUser(user);
     };
     checkAuth();
@@ -64,9 +64,8 @@ export default function Header() {
     };
   }, []);
 
-  const handleLogout = () => {
-    auth.logout();
-    window.dispatchEvent(new Event("auth:change"));
+  const handleLogout = async () => {
+    await auth.logout();
     router.push("/");
   };
 
@@ -83,15 +82,6 @@ export default function Header() {
 
   const navLinks =
     currentUser?.role === "admin" ? adminNavLinks : customerNavLinks;
-
-  // Format price as IDR
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
 
   return (
     <header
@@ -133,8 +123,18 @@ export default function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 text-secondary hover:text-primary transition-colors"
                 >
-                  <User className="w-5 h-5" />
-                  <span className="hidden md:block">{currentUser.name}</span>
+                  {currentUser.avatar ? (
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name || "User"}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-5 h-5" />
+                  )}
+                  <span className="hidden md:block">
+                    {currentUser.name || "User"}
+                  </span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
 
@@ -211,7 +211,7 @@ export default function Header() {
             ))}
             {currentUser ? (
               <div className="px-3 py-2 text-secondary">
-                <p className="font-medium">{currentUser.name}</p>
+                <p className="font-medium">{currentUser.name || "User"}</p>
                 <p className="text-sm text-accent">
                   {currentUser.role === "admin" ? "Admin" : "Customer"}
                 </p>

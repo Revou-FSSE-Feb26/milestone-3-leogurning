@@ -32,8 +32,8 @@ function CheckoutContent() {
   const redirect = searchParams.get("redirect") || "/checkout";
 
   useEffect(() => {
-    const checkAuth = () => {
-      const user = auth.getCurrentUser();
+    const checkAuth = async () => {
+      const user = await auth.getCurrentUser();
       setCurrentUser(user);
 
       // Redirect to login if not authenticated
@@ -56,11 +56,9 @@ function CheckoutContent() {
     };
 
     loadCart();
-    window.addEventListener("auth:change", checkAuth);
     window.addEventListener("cart:change", loadCart);
 
     return () => {
-      window.removeEventListener("auth:change", checkAuth);
       window.removeEventListener("cart:change", loadCart);
     };
   }, [router, redirect]);

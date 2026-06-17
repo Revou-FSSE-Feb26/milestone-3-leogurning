@@ -7,26 +7,28 @@ import Link from "next/link";
 
 function LoginContent() {
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
   const redirect = searchParams.get("redirect") || "/";
 
   useEffect(() => {
-    const user = auth.getCurrentUser();
-    setCurrentUser(user);
+    const checkAuth = async () => {
+      const user = await auth.getCurrentUser();
 
-    // If already logged in, redirect to appropriate page
-    if (user) {
-      if (user.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push(redirect);
+      // If already logged in, redirect to appropriate page
+      if (user) {
+        if (user.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push(redirect);
+        }
       }
-    }
+    };
+
+    checkAuth();
   }, [router, redirect]);
 
   const handleSubmit = async (e) => {
@@ -35,10 +37,10 @@ function LoginContent() {
     setLoading(true);
 
     try {
-      const result = await auth.login(email, password);
+      const result = await auth.login(userName, password);
 
       if (result.success) {
-        const user = auth.getCurrentUser();
+        const user = result.user;
 
         if (user?.role === "admin") {
           router.push("/admin");
@@ -71,20 +73,21 @@ function LoginContent() {
           <div className="space-y-4">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="userName"
                 className="block text-sm font-medium text-secondary mb-1"
               >
-                Email address
+                User Name
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="userName"
+                name="userName"
+                //type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="Enter your email"
+                placeholder="Enter your User Name"
               />
             </div>
 
@@ -122,19 +125,6 @@ function LoginContent() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
-
-        <div className="text-center">
-          <p className="text-sm text-accent">
-            Demo credentials: any email/password works
-          </p>
-          <div className="mt-2 p-3 bg-light rounded-lg">
-            <p className="text-xs text-secondary font-medium mb-1">
-              Admin Login:
-            </p>
-            <p className="text-xs text-accent">Email: admin@leonshop.com</p>
-            <p className="text-xs text-accent">Password: @dmin12E4</p>
-          </div>
-        </div>
 
         <div className="text-center">
           <Link

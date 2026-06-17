@@ -39,6 +39,7 @@ export default function AdminDashboard() {
   const [viewingProduct, setViewingProduct] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
 
   // Format price based on input
@@ -109,14 +110,28 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (!auth.isAdmin()) {
-      router.push("/login");
-      return;
-    }
+    const checkAuth = async () => {
+      const user = await auth.getCurrentUser();
+      setCurrentUser(user);
 
-    // Load products and categories
-    loadProducts();
-    loadCategories();
+      // Redirect to login if not authenticated
+      if (!user) {
+        router.push("/login?redirect=/admin");
+        return;
+      }
+
+      // Redirect to unauthorized if not admin
+      if (user.role !== "admin") {
+        router.push("/unauthorized");
+        return;
+      }
+
+      // Load products and categories only after auth check passes
+      loadProducts();
+      loadCategories();
+    };
+
+    checkAuth();
   }, [router]);
 
   const showNotification = (message, type = "success") => {

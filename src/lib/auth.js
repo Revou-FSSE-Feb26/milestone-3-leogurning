@@ -1,68 +1,95 @@
-import { authenticateUser } from "./api";
-
-// Auth storage key
-const AUTH_KEY = "leonshop_auth";
+// Auth module using API routes with HttpOnly cookies
 
 export const auth = {
   user: null,
 
-  async login(email, password) {
+  async login(userName, password) {
     try {
-      const result = await authenticateUser(email, password);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userName, password }),
+      });
 
-      if (result.success) {
-        this.user = result.user;
-        localStorage.setItem(AUTH_KEY, JSON.stringify(this.user));
-        // Dispatch auth change event to update auth-dependent components
-        window.dispatchEvent(new CustomEvent("auth:change"));
-        return { success: true, user: this.user };
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // After successful login, fetch user data
+        const userResponse = await fetch("/api/auth/me");
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          this.user = userData;
+          // Dispatch auth change event to update auth-dependent components
+          window.dispatchEvent(new CustomEvent("auth:change"));
+          return { success: true, user: this.user };
+        }
       }
 
-      return { success: false, message: result.message };
+      return {
+        success: false,
+        message: data.error || "Invalid credentials. Please try again.",
+      };
     } catch (error) {
       console.error("Login error:", error);
       return { success: false, message: "An error occurred during login" };
     }
   },
 
-  logout() {
-    this.user = null;
-    localStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem("leonshop_cart");
-    sessionStorage.clear();
+  async logout() {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      this.user = null;
+      localStorage.removeItem("leonshop_cart");
+      sessionStorage.clear();
 
-    // Dispatch auth change event to update auth-dependent components
-    window.dispatchEvent(new CustomEvent("auth:change"));
-    // Dispatch cart change event to update cart count
-    window.dispatchEvent(new CustomEvent("cart:change"));
+      // Dispatch auth change event to update auth-dependent components
+      window.dispatchEvent(new CustomEvent("auth:change"));
+      // Dispatch cart change event to update cart count
+      window.dispatchEvent(new CustomEvent("cart:change"));
+    }
   },
 
-  getCurrentUser() {
-    // Return null if running on server (no localStorage available)
+  async getCurrentUser() {
+    // Return cached user if available
+    if (this.user) {
+      return this.user;
+    }
+
+    // Return null if running on server (no fetch available)
     if (typeof window === "undefined") {
       return null;
     }
 
-    if (!this.user) {
-      const stored = localStorage.getItem(AUTH_KEY);
-      if (stored) {
-        this.user = JSON.parse(stored);
+    try {
+      const response = await fetch("/api/auth/me");
+      if (response.ok) {
+        const userData = await response.json();
+        this.user = userData;
+        return this.user;
       }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
     }
-    return this.user;
+
+    return null;
   },
 
   isAuthenticated() {
-    return !!this.getCurrentUser();
+    return !!this.user;
   },
 
   isAdmin() {
-    const user = this.getCurrentUser();
-    return user?.role === "admin";
+    return this.user?.role === "admin";
   },
 
   isCustomer() {
-    const user = this.getCurrentUser();
-    return user?.role === "customer";
+    return this.user?.role === "customer";
   },
 };
