@@ -2,15 +2,14 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getCart, clearCart } from "@/lib/cart";
 import { ArrowLeft, CreditCard, Lock } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { escapeHtml } from "@/lib/api";
+import { useCart } from "@/contexts/CartContext";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -31,6 +30,9 @@ function CheckoutContent() {
   const router = useRouter();
   const redirect = searchParams.get("redirect") || "/checkout";
 
+  // Use cart context
+  const { items: cartItems, clearCart } = useCart();
+
   useEffect(() => {
     const checkAuth = async () => {
       const user = await auth.getCurrentUser();
@@ -44,24 +46,15 @@ function CheckoutContent() {
     };
 
     checkAuth();
-
-    const loadCart = () => {
-      const cart = getCart();
-      if (cart.length === 0) {
-        router.push("/cart");
-        return;
-      }
-      setCartItems(cart);
-      setLoading(false);
-    };
-
-    loadCart();
-    window.addEventListener("cart:change", loadCart);
-
-    return () => {
-      window.removeEventListener("cart:change", loadCart);
-    };
+    setLoading(false);
   }, [router, redirect]);
+
+  // Redirect to cart if cart is empty
+  // useEffect(() => {
+  //   if (!loading && cartItems.length === 0) {
+  //     router.push("/cart");
+  //   }
+  // }, [loading, cartItems, router]);
 
   // Format price as IDR
   const formatPrice = (price) => {
@@ -153,12 +146,12 @@ function CheckoutContent() {
     }
 
     setIsSubmitting(true);
-    // In a real application, you would send this data to your backend here
+    // In a real application, this would send data to backend here
     console.log("Checkout data: ", { ...formData, total: calculateTotal() });
 
     // Simulate checkout
     setTimeout(() => {
-      clearCart();
+      clearCart(); // Uses clearCart from CartContext
       setIsSubmitting(false);
       router.push("/order-success");
     }, 2000);
