@@ -16,7 +16,7 @@ export default function Header() {
   const router = useRouter();
 
   // Use cart context instead of localStorage and event listeners
-  const { itemCount } = useCart();
+  const { itemCount, clearCart } = useCart();
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -56,9 +56,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     // Clear cart using CartContext before logout
-    const { clearCart } = useCart();
     clearCart();
-
     await auth.logout();
     router.push("/");
   };
