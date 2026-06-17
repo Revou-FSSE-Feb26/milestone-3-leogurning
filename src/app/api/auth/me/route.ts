@@ -52,7 +52,9 @@ export async function GET() {
     const authUser: AuthUser = {
       id: userProfile.id,
       email: userProfile.email,
-      name: userProfile.name,
+      //name: userProfile.name,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
       role: role,
       //avatar: userProfile.avatar,
       image: userProfile.image,

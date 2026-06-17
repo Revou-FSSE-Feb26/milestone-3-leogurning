@@ -62,7 +62,7 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("auth:change", checkAuth);
     };
-  }, []);
+  }, [currentUser]);
 
   const handleLogout = async () => {
     await auth.logout();
@@ -123,17 +123,17 @@ export default function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 text-secondary hover:text-primary transition-colors"
                 >
-                  {currentUser.avatar ? (
+                  {currentUser.image ? (
                     <img
-                      src={currentUser.avatar}
-                      alt={currentUser.name || "User"}
+                      src={currentUser.image}
+                      alt={currentUser.firstName || "User"}
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   ) : (
                     <User className="w-5 h-5" />
                   )}
                   <span className="hidden md:block">
-                    {currentUser.name || "User"}
+                    {currentUser.firstName || "User"}
                   </span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -211,7 +211,7 @@ export default function Header() {
             ))}
             {currentUser ? (
               <div className="px-3 py-2 text-secondary">
-                <p className="font-medium">{currentUser.name || "User"}</p>
+                <p className="font-medium">{currentUser.firstName || "User"}</p>
                 <p className="text-sm text-accent">
                   {currentUser.role === "admin" ? "Admin" : "Customer"}
                 </p>
