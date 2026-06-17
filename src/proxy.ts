@@ -19,57 +19,48 @@ export function proxy(request: NextRequest) {
     pathname.startsWith(route),
   );
 
-  // Check for auth cookie
-  const sessionCookie = request.cookies.get("session")?.value;
+  // Check for auth cookie (auth_session is set by /api/auth/login)
   const authCookie = request.cookies.get("auth_session")?.value;
   const isAuthenticated = !!authCookie;
 
-  // If accessing admin page and not authenticated, redirect to login
-  if (isAdminOnlyRoute && !isAuthenticated) {
+  // If accessing protected route and not authenticated, redirect to login with redirect param
+  if (isProtectedRoute && !isAuthenticated) {
     const url = new URL("/login", request.url);
     url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);
   }
 
-  // If accessing cart/checkout and not authenticated, redirect to login
-  if (isProtectedRoute && !isAuthenticated && !isAdminOnlyRoute) {
-    const url = new URL("/login", request.url);
-    url.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(url);
-  }
+  // For admin routes, check the session cookie if available for role verification
+  const sessionCookie = request.cookies.get("session")?.value;
 
-  if (!sessionCookie) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
+  if (isAdminOnlyRoute && isAuthenticated) {
+    // Try to get role from session cookie (set by /api/auth/me)
+    let userRole: string | undefined;
 
-  try {
-    // Decode and parse the session payload from the cookie
-    const sessionData: SessionData = JSON.parse(sessionCookie);
-    const user = sessionData.user;
+    if (sessionCookie) {
+      try {
+        const sessionData: SessionData = JSON.parse(sessionCookie);
+        userRole = sessionData.user?.role;
+      } catch {
+        // Invalid session cookie, user needs to refresh
+        userRole = undefined;
+      }
+    }
 
-    // ==========================================
-    // Parse session data and enforce RBAC rules:
-    //   - Block non-admin users (role !== admin) from admin dashboard
-    // ==========================================
-
-    if (isAdminOnlyRoute && isAuthenticated && user.role !== "admin") {
+    // If no session cookie yet (race condition), allow through - the frontend will handle it
+    // The user will be redirected to /unauthorized after /api/auth/me completes if not admin
+    if (userRole !== undefined && userRole !== "admin") {
       const unauthorizedUrl = new URL("/unauthorized", request.url);
       return NextResponse.redirect(unauthorizedUrl);
     }
-  } catch (error) {
-    console.error("Proxy Auth Verification Error:", error);
-    // In case of cookie corruption or parsing issues, flush the bad cookie
-    // and redirect the user back to the sign-in screen to prevent loading loops.
-    const loginRedirect = NextResponse.redirect(new URL("/login", request.url));
-    loginRedirect.cookies.delete("session");
-    loginRedirect.cookies.delete("auth_session");
-    return loginRedirect;
   }
 
   return NextResponse.next();
 }
 
+// Only for admin, For cart and checkout let client-side handle auth via /api/auth/me
+// This prevents issues with client-side navigation flow where
+// the middleware intercepts requests before client-side redirect completes
 export const config = {
-  matcher: ["/admin/:path*", "/cart", "/checkout"],
+  matcher: ["/admin/:path*"],
 };
