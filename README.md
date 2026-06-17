@@ -48,6 +48,7 @@ LeonShop is a fully functional online store application built with following Nex
 - **APIs**:
   - Platzi Fake Store API (customer-facing products)
   - Escuela JS API (admin product CRUD operations)
+  - Dummyjson.com API for User Authentication and Authorisation
 
 ---
 
@@ -58,6 +59,10 @@ leon-shop/
 ├── src/
 │   ├── app/               # Next.js App Router pages
 │   │   ├── admin/         # Admin dashboard
+│   │   ├── api/auth/      # Internal api auth for routes
+│   │   │   └──login/      # login route
+│   │   │   └──logout/     # logout route
+│   │   │   └──me/         # user profile route
 │   │   ├── cart/          # Shopping cart page
 │   │   ├── checkout/      # Checkout page
 │   │   ├── contact/       # Contact page
@@ -67,6 +72,7 @@ leon-shop/
 │   │   ├── products/      # Product pages
 │   │   │   └── [id]/      # Dynamic product detail route
 │   │   ├── promotions/    # Promotions page
+│   │   ├── unauthorized/  # Unauthorized page
 │   │   ├── layout.jsx     # Root layout with header/footer
 │   │   ├── page.jsx       # Home page
 │   │   └── globals.css    # Global styles
@@ -77,9 +83,11 @@ leon-shop/
 │   ├── lib/               # Utility functions
 │   │   ├── api.js         # API integration (Platzi & Escuela JS)
 │   │   ├── auth.js        # Authentication logic
-│   │   ├── cart.js        # Cart management
-│   │   └── data.js        # User mock data with localStorage
+│   ├── contexts/          # Context for state management
+│   │   ├── CartContext.tsx   # Context for cart management
+│   ├── types/             # Types definition
 │   └── public/            # Static assets
+│   ├── proxy.ts           # Proxy to guard protected pages
 ├── screenshots/           # Application screenshots
 ├── next.config.ts         # Next.js configuration
 ├── tsconfig.json          # TypeScript configuration
@@ -184,11 +192,12 @@ Uses **Escuela JS API** for CRUD operations:
 
 ## Authentication
 
-The application includes a mock authentication system:
+The application includes an authentication system, Using free Dummyjson API:
 
-- **Admin Login**: Specific user admin is set to do Product management
-- **Customer Login**: Any email/password creates can do login as customer account
-- Redirects to previous page after login (cart/checkout)
+- **Admin Login**: Specific user admin is set to do Product management. Using Dummyjson API (https://dummyjson.com//auth/login). e.g: (username: emilys, password: emilyspass) for admin
+- **Customer Login**: Login as customer account to buy, add to cart, checkout. Using Dummyjson API (https://dummyjson.com//auth/login). e.g: (username: avat, password: avatpass) for customer
+- Redirect to login page if not authenticated to access (cart/checkout)
+- Redirect to unauthorized page if not authenticated to access admin dashboard page.
 
 ---
 
@@ -239,14 +248,14 @@ The application includes a mock authentication system:
 - ✅ Home Page with Hero Section and Featured Products
 - ✅ Product Listing Grid with Search and Filter
 - ✅ Product Detail Page with Dynamic Routing
-- ✅ Cart Management (Local Storage)
+- ✅ Cart Management (Using Cart Context, state management)
 - ✅ Promotions Page
 - ✅ FAQ Section
 - ✅ Responsive Design
 - ✅ User Authentication (Customer & Admin)
 - ✅ Admin Dashboard with Search and Pagination
 - ✅ Product Management (Admin) via Escuela JS API
-- ✅ Shopping Cart
+- ✅ Shopping Cart (Using Cart Context, state management)
 - ✅ Checkout Process with Validation
 - ✅ Contact Page with Validation
 - ✅ Order Success Page
