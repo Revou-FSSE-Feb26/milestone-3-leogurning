@@ -52,7 +52,7 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("auth:change", checkAuth);
     };
-  }, [currentUser]);
+  }, []);
 
   const handleLogout = async () => {
     // Clear cart using CartContext before logout

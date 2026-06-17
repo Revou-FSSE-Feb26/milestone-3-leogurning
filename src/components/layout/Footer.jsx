@@ -10,17 +10,15 @@ export default function Footer() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const user = auth.getCurrentUser();
-    setCurrentUser(user);
-
-    const handleAuthChange = () => {
-      const user = auth.getCurrentUser();
+    const checkAuth = async () => {
+      const user = await auth.getCurrentUser();
       setCurrentUser(user);
     };
+    checkAuth();
+    window.addEventListener("auth:change", checkAuth);
 
-    window.addEventListener("auth:change", handleAuthChange);
     return () => {
-      window.removeEventListener("auth:change", handleAuthChange);
+      window.removeEventListener("auth:change", checkAuth);
     };
   }, []);
 
