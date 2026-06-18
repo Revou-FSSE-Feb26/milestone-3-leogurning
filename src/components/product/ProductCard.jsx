@@ -2,29 +2,16 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { addToCart, getCart } from "@/lib/cart";
 import { Plus, Check } from "lucide-react";
 import Image from "next/image";
+import { useCart } from "@/contexts/CartContext";
 
 export default function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    const updateCartCount = () => {
-      const cart = getCart();
-      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
-      setCartCount(total);
-    };
-
-    updateCartCount();
-    window.addEventListener("cart:change", updateCartCount);
-
-    return () => {
-      window.removeEventListener("cart:change", updateCartCount);
-    };
-  }, []);
+  
+  // Use cart context instead of localStorage and event listeners
+  const { addItem, itemCount } = useCart();
 
   // Format price as IDR
   const formatPrice = (price) => {
@@ -39,7 +26,7 @@ export default function ProductCard({ product }) {
     e.preventDefault();
     setIsAdding(true);
 
-    addToCart(product);
+    addItem(product);
     setAdded(true);
 
     setTimeout(() => {
@@ -103,8 +90,6 @@ export default function ProductCard({ product }) {
               <span className="text-xs text-white">Add...</span>
             ) : added ? (
               <span className="text-xs text-white">Added!</span>
-            ) : added ? (
-              <Check className="w-5 h-5" />
             ) : (
               <Plus className="w-5 h-5" />
             )}
@@ -114,3 +99,4 @@ export default function ProductCard({ product }) {
     </Link>
   );
 }
+

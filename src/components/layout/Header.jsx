@@ -3,18 +3,20 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { ShoppingCart, Menu, X, User, ChevronDown } from "lucide-react";
-import { getCart } from "@/lib/cart";
+import { useCart } from "@/contexts/CartContext";
 import { auth } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const [cartCount, setCartCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
   const router = useRouter();
+
+  // Use cart context instead of localStorage and event listeners
+  const { itemCount, clearCart } = useCart();
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -34,16 +36,6 @@ export default function Header() {
   }, [showUserMenu]);
 
   useEffect(() => {
-    const updateCartCount = () => {
-      const cart = getCart();
-      const total = cart.reduce((sum, item) => sum + item.quantity, 0);
-      setCartCount(total);
-    };
-
-    updateCartCount();
-    window.addEventListener("cart:change", updateCartCount);
-    window.addEventListener("storage", updateCartCount);
-
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
@@ -57,14 +49,14 @@ export default function Header() {
     window.addEventListener("auth:change", checkAuth);
 
     return () => {
-      window.removeEventListener("cart:change", updateCartCount);
-      window.removeEventListener("storage", updateCartCount);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("auth:change", checkAuth);
     };
-  }, [currentUser]);
+  }, []);
 
   const handleLogout = async () => {
+    // Clear cart using CartContext before logout
+    clearCart();
     await auth.logout();
     router.push("/");
   };
@@ -172,9 +164,9 @@ export default function Header() {
                 className="relative p-2 text-secondary hover:text-primary transition-colors"
               >
                 <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
+                {itemCount > 0 && (
                   <span className="absolute top-0 right-0 w-5 h-5 bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {cartCount}
+                    {itemCount}
                   </span>
                 )}
               </Link>

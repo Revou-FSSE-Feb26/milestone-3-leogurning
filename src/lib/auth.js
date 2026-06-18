@@ -46,13 +46,11 @@ export const auth = {
       console.error("Logout error:", error);
     } finally {
       this.user = null;
-      localStorage.removeItem("leonshop_cart");
       sessionStorage.clear();
 
       // Dispatch auth change event to update auth-dependent components
       window.dispatchEvent(new CustomEvent("auth:change"));
-      // Dispatch cart change event to update cart count
-      window.dispatchEvent(new CustomEvent("cart:change"));
+      // Note: Cart clearing is now handled by CartContext in components
     }
   },
 

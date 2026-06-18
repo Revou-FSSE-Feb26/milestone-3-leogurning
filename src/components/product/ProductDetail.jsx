@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { fetchProductById } from "@/lib/api";
-import { addToCart } from "@/lib/cart";
 import { ArrowLeft, ShoppingBag, Star, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useCart } from "@/contexts/CartContext";
 
 export default function ProductDetail({ id }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  
+  // Use cart context instead of localStorage functions
+  const { addItem } = useCart();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -41,12 +44,10 @@ export default function ProductDetail({ id }) {
 
     setIsAdding(true);
 
-    const productWithQuantity = {
-      ...product,
-      quantity: quantity,
-    };
-
-    addToCart(productWithQuantity);
+    // Add the product to cart multiple times based on quantity
+    for (let i = 0; i < quantity; i++) {
+      addItem(product);
+    }
 
     setTimeout(() => {
       setIsAdding(false);
@@ -197,3 +198,4 @@ export default function ProductDetail({ id }) {
     </div>
   );
 }
+

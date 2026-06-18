@@ -2,23 +2,20 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  getCart,
-  removeFromCart,
-  updateCartQuantity,
-  clearCart,
-} from "@/lib/cart";
 import { ArrowLeft, ShoppingBag, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { useCart } from "@/contexts/CartContext";
 
 function CartContent() {
   const searchParams = useSearchParams();
-  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
   const redirect = searchParams.get("redirect") || "/cart";
+
+  // Use cart context instead of localStorage and event listeners
+  const { items, itemCount, total, removeItem, updateQuantity, clearCart } = useCart();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -33,28 +30,16 @@ function CartContent() {
     };
 
     checkAuth();
-
-    const loadCart = () => {
-      const cart = getCart();
-      setCartItems(cart);
-      setLoading(false);
-    };
-
-    loadCart();
-    window.addEventListener("cart:change", loadCart);
-
-    return () => {
-      window.removeEventListener("cart:change", loadCart);
-    };
+    setLoading(false);
   }, [router, redirect]);
 
   const handleRemoveItem = (id) => {
-    removeFromCart(id);
+    removeItem(id);
   };
 
   const handleUpdateQuantity = (id, quantity) => {
     if (quantity < 1) return;
-    updateCartQuantity(id, quantity);
+    updateQuantity(id, quantity);
   };
 
   const handleClearCart = () => {
@@ -78,13 +63,6 @@ function CartContent() {
     }).format(price);
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
-    );
-  };
-
   if (loading) {
     return (
       <div className="pt-24 pb-12 min-h-screen bg-light">
@@ -98,7 +76,7 @@ function CartContent() {
     );
   }
 
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="pt-24 pb-12 min-h-screen bg-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,13 +115,13 @@ function CartContent() {
         </div>
 
         <h1 className="text-3xl font-bold text-secondary mb-8">
-          Shopping Cart
+          Shopping Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
+            {items.map((item) => (
               <div
                 key={item.id}
                 className="bg-white p-4 rounded-xl shadow-sm flex gap-4"
@@ -204,7 +182,7 @@ function CartContent() {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-accent">
                   <span>Subtotal</span>
-                  <span>{formatPrice(calculateTotal())}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between text-accent">
                   <span>Shipping</span>
@@ -212,11 +190,11 @@ function CartContent() {
                 </div>
                 <div className="flex justify-between text-accent">
                   <span>Tax</span>
-                  <span>{formatPrice(calculateTotal() * 0.08)}</span>
+                  <span>{formatPrice(total * 0.08)}</span>
                 </div>
                 <div className="border-t border-gray-200 pt-3 flex justify-between font-bold text-secondary">
                   <span>Total</span>
-                  <span>{formatPrice(calculateTotal() * 1.08)}</span>
+                  <span>{formatPrice(total * 1.08)}</span>
                 </div>
               </div>
 
@@ -259,3 +237,4 @@ export default function CartPage() {
     </Suspense>
   );
 }
+
