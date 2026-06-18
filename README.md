@@ -22,7 +22,7 @@ LeonShop is a fully functional online store application built with following Nex
 
 - **Product Browsing**: Browse products in a responsive grid layout with search and filter
 - **Product Details**: View detailed product information including images, descriptions, and pricing (IDR)
-- **Cart Management**: Add products to cart with quantity selection (uses localStorage)
+- **Cart Management**: Add products to cart with quantity selection (use state management Cart Context)
 - **Promotions Page**: View current promotions and discounts
 - **FAQ Section**: Find answers to common questions
 - **User Authentication**: Sign in with customer account (admin or customer)
@@ -194,8 +194,8 @@ Uses **Escuela JS API** for CRUD operations:
 
 The application includes an authentication system, Using free Dummyjson API:
 
-- **Admin Login**: Specific user admin is set to do Product management. Using Dummyjson API (https://dummyjson.com//auth/login). e.g: (username: emilys, password: emilyspass) for admin
-- **Customer Login**: Login as customer account to buy, add to cart, checkout. Using Dummyjson API (https://dummyjson.com//auth/login). e.g: (username: avat, password: avatpass) for customer
+- **Admin Login**: Specific user admin is set to do Product management. Using Dummyjson API (`https://dummyjson.com//auth/login`). e.g: (username: emilys, password: emilyspass) for admin. Can refer to complete user list (`https://dummyjson.com/users`)
+- **Customer Login**: Login as customer account to buy, add to cart, checkout. Using Dummyjson API (`https://dummyjson.com//auth/login`). e.g: (username: avat, password: avatpass) for customer. Can refer to complete user list (`https://dummyjson.com/users`)
 - Redirect to login page if not authenticated to access (cart/checkout)
 - Redirect to unauthorized page if not authenticated to access admin dashboard page.
 
