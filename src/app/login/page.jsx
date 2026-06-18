@@ -42,10 +42,13 @@ function LoginContent() {
       if (result.success) {
         const user = result.user;
 
+        // Use hard navigation (window.location.href) so the browser sends a
+        // fresh request with the newly-set auth_session cookie. If using router.push, 
+        // the browser might not send the cookie in the same request.
         if (user?.role === "admin") {
-          router.push("/admin");
+          window.location.href = "/admin";
         } else {
-          router.push(redirect);
+          window.location.href = redirect;
         }
       } else {
         setError(result.message || "Invalid credentials. Please try again.");

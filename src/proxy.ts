@@ -58,9 +58,8 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Only for admin, For cart and checkout let client-side handle auth via /api/auth/me
-// This prevents issues with client-side navigation flow where
-// the middleware intercepts requests before client-side redirect completes
+// Protected routes: /admin, /cart, /checkout (and their sub-paths).
+// All three are enforced here via the proxy middleware using the auth_session cookie.
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/cart/:path*", "/checkout/:path*"],
 };

@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingBag, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { useCart } from "@/contexts/CartContext";
 
 function CartContent() {
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
-  const redirect = searchParams.get("redirect") || "/cart";
 
   // Use cart context instead of localStorage and event listeners
   const { items, itemCount, total, removeItem, updateQuantity, clearCart } = useCart();
@@ -24,14 +22,17 @@ function CartContent() {
 
       // Redirect to login if not authenticated
       if (!user) {
-        router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
+        // Hardcode /cart as redirect target to avoid redirect-loop bugs
+        router.push("/login?redirect=%2Fcart");
         return;
       }
+
+      // Only stop loading after auth is confirmed
+      setLoading(false);
     };
 
     checkAuth();
-    setLoading(false);
-  }, [router, redirect]);
+  }, [router]);
 
   const handleRemoveItem = (id) => {
     removeItem(id);
