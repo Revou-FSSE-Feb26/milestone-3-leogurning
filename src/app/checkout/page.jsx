@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CreditCard, Lock } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -9,9 +9,7 @@ import { escapeHtml } from "@/lib/api";
 import { useCart } from "@/contexts/CartContext";
 
 function CheckoutContent() {
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,7 +26,6 @@ function CheckoutContent() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const redirect = searchParams.get("redirect") || "/checkout";
 
   // Use cart context
   const { items: cartItems, clearCart } = useCart();
@@ -36,18 +33,20 @@ function CheckoutContent() {
   useEffect(() => {
     const checkAuth = async () => {
       const user = await auth.getCurrentUser();
-      setCurrentUser(user);
 
       // Redirect to login if not authenticated
       if (!user) {
-        router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
+        // Hardcode /checkout as redirect target to avoid redirect-loop bugs
+        router.push("/login?redirect=%2Fcheckout");
         return;
       }
+
+      // Only stop loading after auth is confirmed
+      setLoading(false);
     };
 
     checkAuth();
-    setLoading(false);
-  }, [router, redirect]);
+  }, [router]);
 
   // Redirect to cart if cart is empty
   // useEffect(() => {
@@ -218,9 +217,8 @@ function CheckoutContent() {
                       value={formData.firstName}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.firstName ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.firstName ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.firstName && (
                       <p className="text-red-500 text-xs mt-1">
@@ -243,9 +241,8 @@ function CheckoutContent() {
                       value={formData.lastName}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.lastName ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.lastName ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.lastName && (
                       <p className="text-red-500 text-xs mt-1">
@@ -270,9 +267,8 @@ function CheckoutContent() {
                     value={formData.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -294,9 +290,8 @@ function CheckoutContent() {
                     value={formData.address}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                      errors.address ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.address ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.address && (
                     <p className="text-red-500 text-xs mt-1">
@@ -321,9 +316,8 @@ function CheckoutContent() {
                       value={formData.city}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.city ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.city ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.city && (
                       <p className="text-red-500 text-xs mt-1">{errors.city}</p>
@@ -344,9 +338,8 @@ function CheckoutContent() {
                       value={formData.state}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.state ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.state ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.state && (
                       <p className="text-red-500 text-xs mt-1">
@@ -369,9 +362,8 @@ function CheckoutContent() {
                       value={formData.zipCode}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.zipCode ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.zipCode ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.zipCode && (
                       <p className="text-red-500 text-xs mt-1">
@@ -405,9 +397,8 @@ function CheckoutContent() {
                     value={formData.cardName}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                      errors.cardName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.cardName ? "border-red-500" : "border-gray-300"
+                      }`}
                   />
                   {errors.cardName && (
                     <p className="text-red-500 text-xs mt-1">
@@ -433,9 +424,8 @@ function CheckoutContent() {
                       value={formData.cardNumber}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${
-                        errors.cardNumber ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${errors.cardNumber ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     <CreditCard className="w-5 h-5 text-accent absolute left-3 top-2.5" />
                   </div>
@@ -463,9 +453,8 @@ function CheckoutContent() {
                       value={formData.expiryDate}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                        errors.expiryDate ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.expiryDate ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                     {errors.expiryDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -490,9 +479,8 @@ function CheckoutContent() {
                         value={formData.cvc}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${
-                          errors.cvc ? "border-red-500" : "border-gray-300"
-                        }`}
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pl-10 ${errors.cvc ? "border-red-500" : "border-gray-300"
+                          }`}
                       />
                       <Lock className="w-5 h-5 text-accent absolute left-3 top-2.5" />
                     </div>
