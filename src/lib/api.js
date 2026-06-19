@@ -51,45 +51,7 @@ export async function fetchProducts() {
     }));
   } catch (error) {
     console.error("Error fetching products:", error);
-    // Return mock data as fallback
-    return [
-      {
-        id: 1,
-        title: "Premium Wireless Headphones",
-        price: 1299000,
-        description: "High-quality wireless headphones",
-        category: "Electronics",
-        image: "https://placehold.co/400x400/303841/ffffff?text=Headphones",
-        rating: { rate: 4.5, count: 120 },
-      },
-      {
-        id: 2,
-        title: "Smart Fitness Watch",
-        price: 899000,
-        description: "Track your fitness goals",
-        category: "Electronics",
-        image: "https://placehold.co/400x400/303841/ffffff?text=Smart+Watch",
-        rating: { rate: 4.2, count: 85 },
-      },
-      {
-        id: 3,
-        title: "Organic Cotton T-Shirt",
-        price: 299000,
-        description: "Comfortable organic cotton t-shirt",
-        category: "Fashion",
-        image: "https://placehold.co/400x400/76abae/ffffff?text=T-Shirt",
-        rating: { rate: 4.8, count: 200 },
-      },
-      {
-        id: 4,
-        title: "Modern Desk Lamp",
-        price: 499000,
-        description: "Adjustable LED desk lamp",
-        category: "Home & Living",
-        image: "https://placehold.co/400x400/76abae/ffffff?text=Desk+Lamp",
-        rating: { rate: 4.3, count: 95 },
-      },
-    ];
+    throw error;
   }
 }
 
@@ -115,7 +77,7 @@ export async function fetchProductById(id) {
     };
   } catch (error) {
     console.error("Error fetching product:", error);
-    return null;
+    throw error;
   }
 }
 
@@ -128,8 +90,7 @@ export async function fetchCategories() {
     return await response.json();
   } catch (error) {
     console.error("Error fetching categories:", error);
-    // Return mock categories as fallback
-    return ["Electronics", "Fashion", "Home & Living", "Accessories"];
+    throw error;
   }
 }
 
@@ -214,7 +175,7 @@ export async function fetchProductsPaginated({ offset = 0, limit = 10 } = {}) {
     }));
   } catch (error) {
     console.error("Error fetching products with pagination:", error);
-    return [];
+    throw error;
   }
 }
 
@@ -361,11 +322,6 @@ export async function fetchCategoriesEscuela() {
     return await response.json();
   } catch (error) {
     console.error("Error fetching categories:", error);
-    return [
-      { id: 1, name: "Electronics" },
-      { id: 2, name: "Fashion" },
-      { id: 3, name: "Home & Living" },
-      { id: 4, name: "Accessories" },
-    ];
+    throw error;
   }
 }

@@ -6,10 +6,12 @@ import { ArrowLeft, ShoppingBag, Star, CheckCircle, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/contexts/CartContext";
+import Toast from "@/components/ui/Toast";
 
 export default function ProductDetail({ id }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [quantity, setQuantity] = useState(1);
   
@@ -23,6 +25,7 @@ export default function ProductDetail({ id }) {
         setProduct(data);
       } catch (error) {
         console.error("Error loading product:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -56,34 +59,60 @@ export default function ProductDetail({ id }) {
 
   if (loading) {
     return (
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-96 bg-gray-200 rounded mx-auto w-full"></div>
+      <>
+        {error && (
+          <Toast
+            message="Failed to fetch data, please try again"
+            type="error"
+            onClose={() => setError(false)}
+          />
+        )}
+        <div className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-96 bg-gray-200 rounded mx-auto w-full"></div>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!product) {
     return (
-      <div className="py-12 text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-accent">Product not found.</p>
-          <Link
-            href="/products"
-            className="mt-4 inline-block text-primary hover:underline"
-          >
-            Back to Products
-          </Link>
+      <>
+        {error && (
+          <Toast
+            message="Failed to fetch data, please try again"
+            type="error"
+            onClose={() => setError(false)}
+          />
+        )}
+        <div className="py-12 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-accent">Product not found.</p>
+            <Link
+              href="/products"
+              className="mt-4 inline-block text-primary hover:underline"
+            >
+              Back to Products
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
+    <>
+      {error && (
+        <Toast
+          message="Failed to fetch data, please try again"
+          type="error"
+          onClose={() => setError(false)}
+        />
+      )}
     <div className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
@@ -196,6 +225,7 @@ export default function ProductDetail({ id }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
