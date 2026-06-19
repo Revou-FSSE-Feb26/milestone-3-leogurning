@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, AlertCircle, CheckCircle, Info } from "lucide-react";
 
 /**
@@ -9,47 +9,43 @@ import { X, AlertCircle, CheckCircle, Info } from "lucide-react";
  * Props:
  *  message  {string}  – text to display
  *  type     {string}  – "error" | "success" | "info"  (default: "error")
- *  onClose  {fn}      – called when the toast is dismissed
- *  duration {number}  – ms before auto-dismiss (default: 4000)
+ *  onClose  {fn}      – called after the toast has faded out
+ *  duration {number}  – ms before auto-dismiss (default: 10000)
  */
 export default function Toast({
   message,
   type = "error",
   onClose,
-  duration = 4000,
+  duration = 10000,
 }) {
-  const [visible, setVisible] = useState(false);
+  // Start visible immediately
+  const [visible, setVisible] = useState(true);
 
-  // Small delay so the CSS transition actually fires on mount
+  // Keep onClose stable
+  const onCloseRef = useRef(onClose);
   useEffect(() => {
-    const show = setTimeout(() => setVisible(true), 10);
-    const hide = setTimeout(() => handleClose(), duration);
-    return () => {
-      clearTimeout(show);
-      clearTimeout(hide);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    onCloseRef.current = onClose;
+  });
+
+  // Auto-dismiss after `duration` ms; only re-run when duration changes.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+      // Give the CSS fade-out 300 ms before unmounting
+      setTimeout(() => onCloseRef.current?.(), 300);
+    }, duration);
+    return () => clearTimeout(timer);
   }, [duration]);
 
   const handleClose = () => {
     setVisible(false);
-    // Wait for fade-out transition before unmounting
-    setTimeout(() => onClose?.(), 300);
+    setTimeout(() => onCloseRef.current?.(), 300);
   };
 
   const styles = {
-    error: {
-      bg: "bg-red-500",
-      Icon: AlertCircle,
-    },
-    success: {
-      bg: "bg-green-500",
-      Icon: CheckCircle,
-    },
-    info: {
-      bg: "bg-blue-500",
-      Icon: Info,
-    },
+    error: { bg: "bg-red-500", Icon: AlertCircle },
+    success: { bg: "bg-green-500", Icon: CheckCircle },
+    info: { bg: "bg-blue-500", Icon: Info },
   };
 
   const { bg, Icon } = styles[type] ?? styles.error;
@@ -58,11 +54,14 @@ export default function Toast({
     <div
       role="alert"
       aria-live="assertive"
-      className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl
-        text-white font-medium max-w-sm w-full
-        transition-all duration-300 ease-in-out
-        ${bg}
-        ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
+      // Use inline style for opacity/transform and z-index via className keeps it above everything.
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(-1rem)",
+        transition: "opacity 300ms ease, transform 300ms ease",
+        pointerEvents: visible ? "auto" : "none",
+      }}
+      className={`fixed top-12 right-6 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl text-white font-medium max-w-sm w-full ${bg}`}
     >
       <Icon className="w-5 h-5 flex-shrink-0" />
       <span className="text-sm flex-1">{message}</span>
