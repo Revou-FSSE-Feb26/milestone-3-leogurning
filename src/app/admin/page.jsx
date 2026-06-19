@@ -40,6 +40,9 @@ export default function AdminDashboard() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [notification, setNotification] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const router = useRouter();
 
   // Format price based on input
@@ -178,6 +181,7 @@ export default function AdminDashboard() {
       return;
     }
 
+    setIsAddingProduct(true);
     try {
       const productData = {
         title: newProduct.title,
@@ -216,6 +220,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error adding product:", error);
       showNotification("Failed to add product", "error");
+    } finally {
+      setIsAddingProduct(false);
     }
   };
 
@@ -259,6 +265,7 @@ export default function AdminDashboard() {
       return;
     }
 
+    setIsUpdatingProduct(true);
     try {
       const productData = {
         title: newProduct.title,
@@ -315,6 +322,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error updating product:", error);
       showNotification("Failed to update product", "error");
+    } finally {
+      setIsUpdatingProduct(false);
     }
   };
 
@@ -325,6 +334,7 @@ export default function AdminDashboard() {
 
   const confirmDeleteProduct = async () => {
     if (productToDelete) {
+      setIsDeletingProduct(true);
       try {
         await deleteProduct(productToDelete);
 
@@ -345,14 +355,14 @@ export default function AdminDashboard() {
         }
 
         showNotification("Product deleted successfully!");
+        setShowDeleteModal(false);
+        setProductToDelete(null);
       } catch (error) {
         console.error("Error deleting product:", error);
         showNotification("Failed to delete product", "error");
-        return;
+      } finally {
+        setIsDeletingProduct(false);
       }
-
-      setShowDeleteModal(false);
-      setProductToDelete(null);
     }
   };
 
@@ -561,6 +571,7 @@ export default function AdminDashboard() {
         formatPriceDisplay={formatPriceDisplay}
         handlePriceInputChange={handlePriceInputChange}
         handleAddProduct={handleAddProduct}
+        isSubmitting={isAddingProduct}
       />
 
       {/* Edit Product Modal */}
@@ -573,6 +584,7 @@ export default function AdminDashboard() {
         handlePriceInputChange={handlePriceInputChange}
         handleUpdateProduct={handleUpdateProduct}
         cancelUpdateProduct={cancelEdit}
+        isSubmitting={isUpdatingProduct}
       />
 
       {/* Delete Confirmation Modal */}
@@ -580,6 +592,7 @@ export default function AdminDashboard() {
         showDeleteModal={showDeleteModal}
         cancelDelete={cancelDelete}
         confirmDeleteProduct={confirmDeleteProduct}
+        isSubmitting={isDeletingProduct}
       />
 
       {/* View Product Modal */}
