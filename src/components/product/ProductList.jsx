@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { fetchProducts, fetchCategories } from "@/lib/api";
 import ProductCard from "./ProductCard";
+import Toast from "@/components/ui/Toast";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [categories, setCategories] = useState([]);
@@ -24,6 +26,7 @@ export default function ProductList() {
         setCategories(categoriesData);
       } catch (error) {
         console.error("Error loading products:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -68,6 +71,14 @@ export default function ProductList() {
   }
 
   return (
+    <>
+      {error && (
+        <Toast
+          message="Failed to fetch data, please try again"
+          type="error"
+          onClose={() => setError(false)}
+        />
+      )}
     <section className="py-12 bg-light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
@@ -134,5 +145,6 @@ export default function ProductList() {
         )}
       </div>
     </section>
+    </>
   );
 }

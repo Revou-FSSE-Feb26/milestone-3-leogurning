@@ -126,9 +126,8 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                    errors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.name ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Your name"
                 />
                 {errors.name && (
@@ -150,9 +149,8 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="your@email.com"
                 />
                 {errors.email && (
@@ -174,9 +172,8 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                    errors.subject ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.subject ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="How can we help you?"
                 />
                 {errors.subject && (
@@ -198,9 +195,8 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                    errors.message ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors.message ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Your message..."
                 />
                 {errors.message && (

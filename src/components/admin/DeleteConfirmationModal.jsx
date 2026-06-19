@@ -4,6 +4,7 @@ export default function DeleteConfirmationModal({
   showDeleteModal,
   cancelDelete,
   confirmDeleteProduct,
+  isSubmitting = false,
 }) {
   if (!showDeleteModal) return null;
 
@@ -20,15 +21,24 @@ export default function DeleteConfirmationModal({
         <div className="flex gap-4">
           <button
             onClick={cancelDelete}
-            className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={confirmDeleteProduct}
-            className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Delete
+            {isSubmitting ? (
+              <>
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Delete"
+            )}
           </button>
         </div>
       </div>

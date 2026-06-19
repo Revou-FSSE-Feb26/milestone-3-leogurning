@@ -9,6 +9,7 @@ export default function EditProductModal({
   handlePriceInputChange,
   handleUpdateProduct,
   cancelUpdateProduct,
+  isSubmitting = false,
 }) {
   if (!showEditModal) return null;
 
@@ -120,15 +121,24 @@ export default function EditProductModal({
         <div className="flex gap-4 mt-6">
           <button
             onClick={cancelUpdateProduct}
-            className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 py-2 bg-gray-200 text-secondary rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={handleUpdateProduct}
-            className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Update Product
+            {isSubmitting ? (
+              <>
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Update Product"
+            )}
           </button>
         </div>
       </div>

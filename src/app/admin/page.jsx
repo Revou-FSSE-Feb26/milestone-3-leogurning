@@ -40,6 +40,9 @@ export default function AdminDashboard() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [notification, setNotification] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const router = useRouter();
 
   // Format price based on input
@@ -76,6 +79,7 @@ export default function AdminDashboard() {
       setProducts(data);
     } catch (error) {
       console.error("Error loading products:", error);
+      showNotification("Failed to fetch data, please try again", "error");
       // Fallback to localStorage if API fails
       try {
         const stored = localStorage.getItem("leonshop_products");
@@ -98,6 +102,7 @@ export default function AdminDashboard() {
       setCategories(data);
     } catch (error) {
       console.error("Error loading categories:", error);
+      showNotification("Failed to fetch categories, please try again", "error");
       // Fallback categories - matching Escuela JS API IDs
       setCategories([
         { id: 1, name: "Clothes" },
@@ -176,6 +181,7 @@ export default function AdminDashboard() {
       return;
     }
 
+    setIsAddingProduct(true);
     try {
       const productData = {
         title: newProduct.title,
@@ -214,6 +220,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error adding product:", error);
       showNotification("Failed to add product", "error");
+    } finally {
+      setIsAddingProduct(false);
     }
   };
 
@@ -257,6 +265,7 @@ export default function AdminDashboard() {
       return;
     }
 
+    setIsUpdatingProduct(true);
     try {
       const productData = {
         title: newProduct.title,
@@ -277,14 +286,14 @@ export default function AdminDashboard() {
       const updatedProducts = products.map((p) =>
         p.id === editingProduct.id
           ? {
-              ...p,
-              title: newProduct.title,
-              price: parseFloat(newProduct.price),
-              description: newProduct.description,
-              category: categoryName,
-              categoryId: newProduct.categoryId,
-              image: newProduct.image,
-            }
+            ...p,
+            title: newProduct.title,
+            price: parseFloat(newProduct.price),
+            description: newProduct.description,
+            category: categoryName,
+            categoryId: newProduct.categoryId,
+            image: newProduct.image,
+          }
           : p,
       );
       setProducts(updatedProducts);
@@ -313,6 +322,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error updating product:", error);
       showNotification("Failed to update product", "error");
+    } finally {
+      setIsUpdatingProduct(false);
     }
   };
 
@@ -323,6 +334,7 @@ export default function AdminDashboard() {
 
   const confirmDeleteProduct = async () => {
     if (productToDelete) {
+      setIsDeletingProduct(true);
       try {
         await deleteProduct(productToDelete);
 
@@ -343,14 +355,14 @@ export default function AdminDashboard() {
         }
 
         showNotification("Product deleted successfully!");
+        setShowDeleteModal(false);
+        setProductToDelete(null);
       } catch (error) {
         console.error("Error deleting product:", error);
         showNotification("Failed to delete product", "error");
-        return;
+      } finally {
+        setIsDeletingProduct(false);
       }
-
-      setShowDeleteModal(false);
-      setProductToDelete(null);
     }
   };
 
@@ -375,13 +387,12 @@ export default function AdminDashboard() {
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${
-            notification.type === "error"
+          className={`fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${notification.type === "error"
               ? "bg-red-500"
               : notification.type === "info"
                 ? "bg-blue-500"
                 : "bg-green-500"
-          }`}
+            }`}
         >
           {notification.message}
         </div>
@@ -511,11 +522,10 @@ export default function AdminDashboard() {
                     setCurrentPage((prev) => Math.max(1, prev - 1))
                   }
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    currentPage === 1
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${currentPage === 1
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : "bg-primary text-white hover:bg-primary-dark"
-                  }`}
+                    }`}
                 >
                   Previous
                 </button>
@@ -524,11 +534,10 @@ export default function AdminDashboard() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                        currentPage === page
+                      className={`px-4 py-2 rounded-lg text-sm font-medium ${currentPage === page
                           ? "bg-primary text-white"
                           : "bg-white text-secondary hover:bg-light"
-                      }`}
+                        }`}
                     >
                       {page}
                     </button>
@@ -539,11 +548,10 @@ export default function AdminDashboard() {
                     setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    currentPage === totalPages
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${currentPage === totalPages
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : "bg-primary text-white hover:bg-primary-dark"
-                  }`}
+                    }`}
                 >
                   Next
                 </button>
@@ -563,6 +571,7 @@ export default function AdminDashboard() {
         formatPriceDisplay={formatPriceDisplay}
         handlePriceInputChange={handlePriceInputChange}
         handleAddProduct={handleAddProduct}
+        isSubmitting={isAddingProduct}
       />
 
       {/* Edit Product Modal */}
@@ -575,6 +584,7 @@ export default function AdminDashboard() {
         handlePriceInputChange={handlePriceInputChange}
         handleUpdateProduct={handleUpdateProduct}
         cancelUpdateProduct={cancelEdit}
+        isSubmitting={isUpdatingProduct}
       />
 
       {/* Delete Confirmation Modal */}
@@ -582,6 +592,7 @@ export default function AdminDashboard() {
         showDeleteModal={showDeleteModal}
         cancelDelete={cancelDelete}
         confirmDeleteProduct={confirmDeleteProduct}
+        isSubmitting={isDeletingProduct}
       />
 
       {/* View Product Modal */}
