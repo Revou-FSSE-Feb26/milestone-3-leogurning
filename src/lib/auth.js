@@ -21,8 +21,7 @@ export const auth = {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           this.user = userData;
-          // Dispatch auth change event to update auth-dependent components
-          window.dispatchEvent(new CustomEvent("auth:change"));
+
           return { success: true, user: this.user };
         }
       }
@@ -47,10 +46,6 @@ export const auth = {
     } finally {
       this.user = null;
       sessionStorage.clear();
-
-      // Dispatch auth change event to update auth-dependent components
-      window.dispatchEvent(new CustomEvent("auth:change"));
-      // Note: Cart clearing is now handled by CartContext in components
     }
   },
 

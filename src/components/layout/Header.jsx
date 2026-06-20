@@ -46,11 +46,9 @@ export default function Header() {
       setCurrentUser(user);
     };
     checkAuth();
-    window.addEventListener("auth:change", checkAuth);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("auth:change", checkAuth);
     };
   }, []);
 
@@ -58,7 +56,8 @@ export default function Header() {
     // Clear cart using CartContext before logout
     clearCart();
     await auth.logout();
-    router.push("/");
+    // Use window.location.href to force full page reload and fresh auth state
+    window.location.href = "/";
   };
 
   // Admin navigation links

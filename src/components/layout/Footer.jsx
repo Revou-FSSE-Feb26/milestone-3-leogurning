@@ -15,11 +15,6 @@ export default function Footer() {
       setCurrentUser(user);
     };
     checkAuth();
-    window.addEventListener("auth:change", checkAuth);
-
-    return () => {
-      window.removeEventListener("auth:change", checkAuth);
-    };
   }, []);
 
   // Hide Quick Links and Contact Us for admin users
