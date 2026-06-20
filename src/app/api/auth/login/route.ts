@@ -19,19 +19,8 @@ export async function POST(request: Request) {
     }
 
     // ==========================================
-    // Forward (proxy) the login request to the external flatzi api authentication service
+    // Forward (proxy) the login request to the external dummyjson api authentication service
     // ==========================================
-    // const response = await fetch(API_URL + "/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     email,
-    //     password,
-    //     expiresInMins: 30,
-    //   }),
-    //   credentials: "include",
-    // });
-
     const response = await fetch(API_URL + "/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
